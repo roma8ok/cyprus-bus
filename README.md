@@ -1,6 +1,6 @@
 # Cyprus Bus: Real-Time Bus Tracking Application
 
-Link to GitHub Pages: [Cyprus Bus](https://roma8ok.github.io/cyprus-bus).
+### WEB app: [cyprusbus.info](http://cyprusbus.info)
 
 Cyprus Bus is a real-time bus tracking web application for Cyprus, leveraging the GTFS (General Transit Feed
 Specification) Realtime feed.

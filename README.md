@@ -12,7 +12,7 @@ interactive way to track public transportation in Cyprus.
 
 - **Real-Time Bus Tracking**: Utilizes GTFS Realtime data to display the current positions of buses in Cyprus.
 - **Interactive Map**: Leverages the Leaflet library for an interactive map experience.
-- **Automatic Updates**: The bus locations are updated every 30 seconds, ensuring up-to-date information.
+- **Automatic Updates**: The bus locations are updated every 10 seconds, ensuring up-to-date information.
 - **Popup Information**: Clicking on any bus marker reveals details such as bus label and the latest timestamp.
 
 ## Data source

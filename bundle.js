@@ -11028,14 +11028,48 @@ function formatTime(date) {
     let hours = date.getHours();
     let minutes = date.getMinutes();
 
-    // Adding leading zero if the number is less than 10.
     hours = hours < 10 ? '0' + hours : hours;
     minutes = minutes < 10 ? '0' + minutes : minutes;
 
     return hours + ':' + minutes;
 }
 
-var map = L.map('map').setView([35.1264, 33.4299], 8);
+function transitionMarker(marker, newLat, newLng, duration) {
+    let start = performance.now();
+    let from = marker.getLatLng();
+    let to = new L.LatLng(newLat, newLng);
+
+    function animate(timestamp) {
+        let progress = Math.min((timestamp - start) / duration, 1);
+        marker.setLatLng([from.lat + (to.lat - from.lat) * progress,
+            from.lng + (to.lng - from.lng) * progress]);
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+function roundToTens(num) {
+    return Math.round(num / 10) * 10;
+}
+
+function createBusIcon(bearing) {
+    let tens = roundToTens(bearing);
+
+    let iconURL = `icons/icon${tens}.svg`;
+
+    return L.icon({
+        iconUrl: iconURL,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12],
+    });
+}
+
+let map = L.map('map').setView([35.1264, 33.4299], 8);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -11044,6 +11078,7 @@ map.attributionControl.setPrefix('');
 
 let markers = L.layerGroup().addTo(map);
 
+let vehicleMarkers = {};
 const fetchData = () => {
     fetch('http://20.19.98.194:8328/Api/api/gtfs-realtime')
         .then(response => response.arrayBuffer())
@@ -11051,25 +11086,45 @@ const fetchData = () => {
             const uint8Array = new Uint8Array(buffer);
             const message = Proto.FeedMessage.deserializeBinary(uint8Array);
 
-            markers.clearLayers();
+            let updatedVehicleIds = new Set();
 
             let entities = message.getEntityList();
             entities.forEach(entity => {
+                let vehicleId = entity.getVehicle().getVehicle().getLabel();
+                updatedVehicleIds.add(vehicleId);
+
                 let label = entity.getVehicle().getVehicle().getLabel();
                 let latitude = entity.getVehicle().getPosition().getLatitude();
                 let longitude = entity.getVehicle().getPosition().getLongitude();
                 let date = new Date(entity.getVehicle().getTimestamp() * 1000);
+                let bearing = entity.getVehicle().getPosition().getBearing();
 
-                L.marker([latitude, longitude]).addTo(markers)
-                    .bindPopup(`<b>Label:</b> ${label}<br><b>Timestamp:</b> ${formatTime(date)}`);
+                if (vehicleMarkers[vehicleId]) {
+                    let busIcon = createBusIcon(bearing);
+                    vehicleMarkers[vehicleId].setIcon(busIcon);
+
+                    transitionMarker(vehicleMarkers[vehicleId], latitude, longitude, 1000);
+                } else {
+                    let busIcon = createBusIcon(bearing);
+
+                    vehicleMarkers[vehicleId] = L.marker([latitude, longitude], {icon: busIcon}).addTo(markers)
+                        .bindPopup(`<b>Label:</b> ${label}<br><b>Timestamp:</b> ${formatTime(date)}`);
+                }
+            });
+
+            Object.keys(vehicleMarkers).forEach(vehicleId => {
+                if (!updatedVehicleIds.has(vehicleId)) {
+                    markers.removeLayer(vehicleMarkers[vehicleId]);
+                    delete vehicleMarkers[vehicleId];
+                }
             });
         })
         .catch(error => console.error('Error:', error));
-}
+};
 
 fetchData();
 
-setInterval(fetchData, 30000); // 30 seconds
+setInterval(fetchData, 10000);
 
 },{"./gtfs_realtime_pb.js":1,"leaflet":4}],3:[function(require,module,exports){
 (function (global){(function (){

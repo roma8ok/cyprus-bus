@@ -11024,49 +11024,10 @@ goog.object.extend(exports, proto.transit_realtime);
 const Proto = require('./gtfs_realtime_pb.js');
 const L = require('leaflet');
 
-function formatTime(date) {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-
-    return hours + ':' + minutes;
-}
-
-function transitionMarker(marker, newLat, newLng, duration) {
-    let start = performance.now();
-    let from = marker.getLatLng();
-    let to = new L.LatLng(newLat, newLng);
-
-    function animate(timestamp) {
-        let progress = Math.min((timestamp - start) / duration, 1);
-        marker.setLatLng([from.lat + (to.lat - from.lat) * progress,
-            from.lng + (to.lng - from.lng) * progress]);
-
-        if (progress < 1) {
-            requestAnimationFrame(animate);
-        }
-    }
-
-    requestAnimationFrame(animate);
-}
-
-function roundToTens(num) {
-    return Math.round(num / 10) * 10;
-}
-
-function createBusIcon(bearing) {
-    let tens = roundToTens(bearing);
-
-    let iconURL = `icons/icon${tens}.svg`;
-
-    return L.icon({
-        iconUrl: iconURL,
-        iconSize: [30, 30],
-        iconAnchor: [12, 12],
-        popupAnchor: [0, -12],
-    });
+if (window.location.protocol === 'https:') {
+    let httpsUrl = 'http://' + window.location.hostname + window.location.pathname;
+    alert('Warning: For up-to-date bus tracking, we\'re switching to HTTP due to open data source limitations. You\'ll be redirected shortly.\n\nClick OK to proceed to the HTTP version')
+    window.location.href = httpsUrl;
 }
 
 let map = L.map('map').setView([35.1264, 33.4299], 8);
@@ -11137,6 +11098,51 @@ const fetchData = () => {
 fetchData();
 
 setInterval(fetchData, 10000);
+
+function formatTime(date) {
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+
+    hours = hours < 10 ? '0' + hours : hours;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return hours + ':' + minutes;
+}
+
+function transitionMarker(marker, newLat, newLng, duration) {
+    let start = performance.now();
+    let from = marker.getLatLng();
+    let to = new L.LatLng(newLat, newLng);
+
+    function animate(timestamp) {
+        let progress = Math.min((timestamp - start) / duration, 1);
+        marker.setLatLng([from.lat + (to.lat - from.lat) * progress,
+            from.lng + (to.lng - from.lng) * progress]);
+
+        if (progress < 1) {
+            requestAnimationFrame(animate);
+        }
+    }
+
+    requestAnimationFrame(animate);
+}
+
+function roundToTens(num) {
+    return Math.round(num / 10) * 10;
+}
+
+function createBusIcon(bearing) {
+    let tens = roundToTens(bearing);
+
+    let iconURL = `icons/icon${tens}.svg`;
+
+    return L.icon({
+        iconUrl: iconURL,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
+        popupAnchor: [0, -12],
+    });
+}
 
 },{"./gtfs_realtime_pb.js":1,"leaflet":4}],3:[function(require,module,exports){
 (function (global){(function (){

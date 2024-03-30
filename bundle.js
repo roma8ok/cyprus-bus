@@ -11063,7 +11063,7 @@ function createBusIcon(bearing) {
 
     return L.icon({
         iconUrl: iconURL,
-        iconSize: [24, 24],
+        iconSize: [30, 30],
         iconAnchor: [12, 12],
         popupAnchor: [0, -12],
     });
@@ -11098,6 +11098,9 @@ const fetchData = () => {
                 let longitude = entity.getVehicle().getPosition().getLongitude();
                 let date = new Date(entity.getVehicle().getTimestamp() * 1000);
                 let bearing = entity.getVehicle().getPosition().getBearing();
+                let startTime = entity.getVehicle().getTrip().getStartTime();
+                let speedMeterPerSecond = entity.getVehicle().getPosition().getSpeed();
+                let speedKmPerHour = Math.round(speedMeterPerSecond * 3.6);
 
                 if (vehicleMarkers[vehicleId]) {
                     let busIcon = createBusIcon(bearing);
@@ -11108,7 +11111,12 @@ const fetchData = () => {
                     let busIcon = createBusIcon(bearing);
 
                     vehicleMarkers[vehicleId] = L.marker([latitude, longitude], {icon: busIcon}).addTo(markers)
-                        .bindPopup(`<b>Label:</b> ${label}<br><b>Timestamp:</b> ${formatTime(date)}`);
+                        .bindPopup(`
+                            <b>Label:</b> ${label}<br>
+                            <b>Speed:</b> ${speedKmPerHour} km/h<br>
+                            <b>Start time:</b> ${startTime}<br>
+                            <b>Timestamp:</b> ${formatTime(date)}
+                        `);
                 }
             });
 
@@ -11118,6 +11126,10 @@ const fetchData = () => {
                     delete vehicleMarkers[vehicleId];
                 }
             });
+
+            let busCount = Object.keys(vehicleMarkers).length;
+            document.getElementById('bus-count').innerText = `Buses transmit location: ${busCount}`;
+
         })
         .catch(error => console.error('Error:', error));
 };

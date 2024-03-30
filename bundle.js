@@ -11138,7 +11138,7 @@ function createBusIcon(bearing) {
 
     return L.icon({
         iconUrl: iconURL,
-        iconSize: [24, 24],
+        iconSize: [30, 30],
         iconAnchor: [12, 12],
         popupAnchor: [0, -12],
     });

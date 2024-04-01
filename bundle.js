@@ -27389,6 +27389,147 @@ const routes = new Map([
         longName: 'Nightly Larnaka Station - Airport - Meneou - Kiti - Mazotos - Tourist Area Pentaschinos - Zygi - Mari - Vasiliko'
     }],
     ['20500011', {shortName: '440', longName: 'Larnaca St. - Mackenzie - Mall - Larnaca St.'}],
+    ['40000011', {
+        shortName: '101',
+        longName: 'Agia Napa (Waterpark) - Cape Greco - Konnos - Protaras - Pernera - Paralimni'
+    }],
+    ['40010011', {
+        shortName: '102',
+        longName: 'Paralimni - Pernera - Protaras - Konnos - Cape Greco - Agia Napa (Waterpark)'
+    }],
+    ['40020011', {
+        shortName: '201',
+        longName: 'Luna Park-Thalassa Mus.-Ag. Napa Sq.-Nissi Ave.-Marina-Waterpark-T. Anthia-M. Kasialou-Thalassa-Ag. Napa Sq.-Luna Park'
+    }],
+    ['40030011', {
+        shortName: '301',
+        longName: 'Par. Station-1 Apriliou (N)-G. Papad/lou-Kappari Av.-Protara Av.-Ag Varvara Ch.-Stadiou-1 Apriliou (S)-Par. Station'
+    }],
+    ['40040011', {
+        shortName: '501',
+        longName: 'Deryneia (Green Line) - Frenaros - Liopetri - Waterpark - Ag. Napa - Paralimni - Gen. Hospital - Deryneia (Green Line)'
+    }],
+    ['40050011', {
+        shortName: '502',
+        longName: 'Deryneia (Green Line) - Gen. Hospital - Paralimni - Ag. Napa - Waterpark - Liopetri - Frenaros - Deryneia (Green Line)'
+    }],
+    ['40060011', {
+        shortName: '701',
+        longName: 'Ormideia - Xylofagou - Liopetri - Sotira - Deryneia - Famagusta Gen. Hospital - Paralimni'
+    }],
+    ['40060012', {
+        shortName: '701',
+        longName: 'Paralimni - Famagusta Gen.Hospital - Deryneia - Sotira - Liopetri - Xylofagou - Ormideia'
+    }],
+    ['40070011', {
+        shortName: '702',
+        longName: 'Xylotympou - Dasaki Achnas - Avgorou - Frenaros - Deryneia - Famagusta General Hospital - Paralimni'
+    }],
+    ['40070012', {
+        shortName: '702',
+        longName: 'Paralimni - Famagusta General Hospital - Deryneia - Frenaros - Avgorou - Dasaki Achnas - Xylotympou'
+    }],
+    ['40080011', {
+        shortName: '703',
+        longName: 'E.A.C. Dhekelia - Ormideia - Xylofagou - Liopetri - Sotira - Paralimni - Protaras - Konnos'
+    }],
+    ['40080012', {
+        shortName: '703',
+        longName: 'Konnos - Protaras - Paralimni - Sotira - Liopetri - Xylofagou - Ormideia - E.A.C. Dhekelia'
+    }],
+    ['40090011', {shortName: '704', longName: 'E.A.C. Dhekelia - Xylotympou - Ormideia - Xylofagou - Agia Napa'}],
+    ['40090012', {shortName: '704', longName: 'Agia Napa - Xylofagou - Ormideia - Xylotympou - E.A.C. Dhekelia'}],
+    ['40100011', {shortName: '705', longName: 'Dasaki Achnas - Avgorou - Liopetri - Agia Napa'}],
+    ['40100012', {shortName: '705', longName: 'Agia Napa - Liopetri - Avgorou - Dasaki Achnas'}],
+    ['40110011', {
+        shortName: '706',
+        longName: 'Xylotympou - Dasaki Achnas - Avgorou - Frenaros - Deryneia - Paralimni - Protaras - Konnos'
+    }],
+    ['40110012', {
+        shortName: '706',
+        longName: 'Konnos - Protaras - Paralimni - Deryneia - Frenaros - Avgorou - Dasaki Achnas - Xylotympou'
+    }],
+    ['40120011', {
+        shortName: '708',
+        longName: 'Strovilia (Green Line) - Vrysoulles - Frenaros - Deryneia - Famagusta General Hospital - Paralimni - Protaras - Konnos'
+    }],
+    ['40120012', {
+        shortName: '708',
+        longName: 'Konnos - Protaras - Paralimni - Famagusta General Hospital - Deryneia - Frenaros - Vrysoulles - Strovilia (Green Line)'
+    }],
+    ['40130011', {shortName: '709', longName: 'Strovilia (Green Line) - Vrysoulles - Frenaros - Sotira - Agia Napa'}],
+    ['40130012', {shortName: '709', longName: 'Agia Napa - Sotira - Frenaros - Vrysoulles - Strovilia (Green Line)'}],
+    ['40140011', {shortName: '710', longName: 'Deryneia - Sotira - Agia Napa'}],
+    ['40140012', {shortName: '710', longName: 'Agia Napa - Sotira - Deryneia'}],
+    ['40150011', {
+        shortName: '711',
+        longName: 'Paralimni-Kapparis-Protaras-Konnos-Ag. Napa-Ag. Thekla Beach-Xylofagou-Ormideia-Larnaka-New Hospital-Metropolis Mall'
+    }],
+    ['40150012', {
+        shortName: '711',
+        longName: 'Metropolis Mall-New Hospital-Larnaka-Ormideia-Xylofagou-Ag. Thekla Beach-Ag. Napa-Konnos-Protaras-Kapparis-Paralimni'
+    }],
+    ['40160011', {
+        shortName: '712',
+        longName: 'Paralimni-Gen. Hospital-Deryneia-Frenaros-Vrysoulles-Avgorou-Dasaki-Xylotympou-Larnaka-New Hospital-Metropolis Mall'
+    }],
+    ['40160012', {
+        shortName: '712',
+        longName: 'Metropolis Mall-New Hospital-Larnaka-Xylotympou-Dasaki-Avgorou-Vrysoulles-Frenaros-Deryneia-Gen. Hospital-Paralimni'
+    }],
+    ['40170011', {
+        shortName: '714',
+        longName: 'Paralimni-Famagusta Hospital-Deryneia-Sotira-Liopetri-Xylofagou-Dhekelia-Larnaka-New Hospital-Metropolis Mall'
+    }],
+    ['40170012', {
+        shortName: '714',
+        longName: 'Metropolis Mall-New Hospital-Larnaka-Dhekelia-Xylofagou-Liopetri-Sotira-Deryneia-Famagusta Hospital-Paralimni'
+    }],
+    ['40180011', {
+        shortName: '510',
+        longName: 'Gen. Hospital - Paralimni Lyceum - Kapparis - Paralimni - Ag. Napa - Waterpark - Ag. Thekla Beach'
+    }],
+    ['40180012', {
+        shortName: '510',
+        longName: 'Ag. Thekla Beach - Waterpark - Ag. Napa - Paralimni - Kapparis - Paralimni Lyceum'
+    }],
+    ['40190011', {shortName: '302', longName: 'Paralimni - Pernera - Kapparis Circle Line'}],
+    ['40200011', {shortName: '303', longName: 'Paralimni -  1 Apriliou - Kapparis - Pernera - Protaras - Konnos'}],
+    ['40200012', {shortName: '303', longName: 'Konnos - Protaras - Pernera - Kapparis -  1 Apriliou - Paralimni'}],
+    ['40210011', {shortName: '304', longName: 'Paralimni - Pernera - Protaras - Konnos'}],
+    ['40210012', {shortName: '304', longName: 'Konnos - Protaras - Pernera - Paralimni'}],
+    ['40220011', {
+        shortName: '202',
+        longName: 'Luna Park-Thalassa-Ag. Napa Sq-Nissi Av.-Ag. Napa Marina-T. Anthia-M. Kasialou-Thalassa-Ag. Napa Sq-Luna Park'
+    }],
+    ['40230011', {shortName: '704A', longName: 'E.A.C. Dhekelia - Xylofagou - Agia Napa'}],
+    ['40230012', {shortName: '704A', longName: 'Agia Napa - Xylofagou - E.A.C. Dhekelia'}],
+    ['40240011', {shortName: '704B', longName: 'Xylotympou - Ormideia - Xylofagou - Agia Napa'}],
+    ['40240012', {shortName: '704B', longName: 'Agia Napa - Xylofagou - Ormideia - Xylotympou'}],
+    ['40250011', {shortName: '704C', longName: 'Xylofagou - Agia Napa'}],
+    ['40250012', {shortName: '704C', longName: 'Agia Napa - Xylofagou'}],
+    ['40260011', {
+        shortName: '701A',
+        longName: 'Xylofagou - Liopetri - Sotira - Paralimni - Famagusta General Hospital'
+    }],
+    ['40260012', {shortName: '701A', longName: 'Paralimni - Sotira - Liopetri - Xylofagou'}],
+    ['40270011', {
+        shortName: '712A',
+        longName: 'Paralimni - Gen. Hospital - Deryneia - Frenaros - Vrysoulles - Xylotympou - Larnaka - New Hospital'
+    }],
+    ['40280011', {
+        shortName: '714A',
+        longName: 'Paralimni-Famagusta Hospital-Deryneia-Sotira-Liopetri-Xylofagou-Dhekelia-Larnaka-New Hospital-Metropolis Mall'
+    }],
+    ['40290011', {
+        shortName: '702A',
+        longName: 'Xylotympou - Dasaki Achnas - Avgorou - Liopetri -Frenaros - Deryneia - Famagusta General Hospital - Paralimni'
+    }],
+    ['40290012', {
+        shortName: '702A',
+        longName: 'Paralimni - Famagusta General Hospital - Deryneia - Frenaros - Liopetri - Avgorou - Dasaki Achnas - Xylotympou'
+    }],
+    ['9990999', {shortName: 'GSP1', longName: 'GSP-Ministry of Finance - Omirou - GSP'}],
 ]);
 
 module.exports = {routes};

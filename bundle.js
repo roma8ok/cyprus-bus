@@ -11023,6 +11023,7 @@ goog.object.extend(exports, proto.transit_realtime);
 },{"google-protobuf":3}],2:[function(require,module,exports){
 const Proto = require('./gtfs_realtime_pb.js');
 const L = require('leaflet');
+const routes = require('./routes.js');
 
 if (window.location.protocol === 'https:') {
     let httpsUrl = 'http://' + window.location.hostname + window.location.pathname;
@@ -11054,14 +11055,22 @@ const fetchData = () => {
                 let vehicleId = entity.getVehicle().getVehicle().getLabel();
                 updatedVehicleIds.add(vehicleId);
 
-                let label = entity.getVehicle().getVehicle().getLabel();
                 let latitude = entity.getVehicle().getPosition().getLatitude();
                 let longitude = entity.getVehicle().getPosition().getLongitude();
-                let date = new Date(entity.getVehicle().getTimestamp() * 1000);
                 let bearing = entity.getVehicle().getPosition().getBearing();
                 let startTime = entity.getVehicle().getTrip().getStartTime();
                 let speedMeterPerSecond = entity.getVehicle().getPosition().getSpeed();
                 let speedKmPerHour = Math.round(speedMeterPerSecond * 3.6);
+                let routeID = entity.getVehicle().getTrip().getRouteId();
+
+                let routeShortName = 'Unknown route';
+                let routeLongName ='';
+
+                let route = routes.routes.get(routeID);
+                if (route) {
+                    routeShortName = route.shortName;
+                    routeLongName = route.longName;
+                }
 
                 if (vehicleMarkers[vehicleId]) {
                     let busIcon = createBusIcon(bearing);
@@ -11073,10 +11082,9 @@ const fetchData = () => {
 
                     vehicleMarkers[vehicleId] = L.marker([latitude, longitude], {icon: busIcon}).addTo(markers)
                         .bindPopup(`
-                            <b>Label:</b> ${label}<br>
+                            <b>${routeShortName}</b> ${routeLongName}<br>
                             <b>Speed:</b> ${speedKmPerHour} km/h<br>
-                            <b>Start time:</b> ${startTime}<br>
-                            <b>Timestamp:</b> ${formatTime(date)}
+                            <b>Start time:</b> ${startTime}
                         `);
                 }
             });
@@ -11098,16 +11106,6 @@ const fetchData = () => {
 fetchData();
 
 setInterval(fetchData, 10000);
-
-function formatTime(date) {
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
-
-    hours = hours < 10 ? '0' + hours : hours;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-
-    return hours + ':' + minutes;
-}
 
 function transitionMarker(marker, newLat, newLng, duration) {
     let start = performance.now();
@@ -11144,7 +11142,7 @@ function createBusIcon(bearing) {
     });
 }
 
-},{"./gtfs_realtime_pb.js":1,"leaflet":4}],3:[function(require,module,exports){
+},{"./gtfs_realtime_pb.js":1,"./routes.js":5,"leaflet":4}],3:[function(require,module,exports){
 (function (global){(function (){
 /*
 
@@ -26227,5 +26225,1172 @@ goog.exportProperty(jspb.Message,"registerMessageType",jspb.Message.registerMess
 
 }));
 
+
+},{}],5:[function(require,module,exports){
+const routes = new Map([
+    ['10030011', {shortName: '3', longName: 'Agios Athanasios - Mesa Geitonia - Leontiou EMEL Station'}],
+    ['10030012', {shortName: '3', longName: 'Leontiou EMEL Station - Mesa Geitonia - Agios Athanasios'}],
+    ['10040011', {shortName: '4', longName: 'Road & Traffic Authority - Leontiou EMEL Station'}],
+    ['10040012', {shortName: '4', longName: 'Leontiou EMEL Station - Road & Traffic Authority'}],
+    ['10040021', {shortName: '4', longName: 'Technical School C (Hotel School) - Leontiou EMEL St.'}],
+    ['10040022', {shortName: '4', longName: 'Leontiou EMEL St. - Technical School C (Hotel School)'}],
+    ['10050021', {shortName: '5', longName: 'General Hospital - Agios Ioannis - Leontiou EMEL Station'}],
+    ['10050022', {shortName: '5', longName: 'Leontiou EMEL Station - Agios Ioannis - General Hospital'}],
+    ['10070011', {shortName: '7', longName: 'My Mall- Ypsonas Industrial Area - Leontiou EMEL Station'}],
+    ['10070012', {shortName: '7', longName: 'Leontiou EMEL Station - Ypsonas Industrial Area - My Mall'}],
+    ['10090011', {shortName: '9', longName: 'Palodeia - Agia Fyla - Leontiou EMEL Station'}],
+    ['10090012', {shortName: '9', longName: 'Leontiou EMEL Station - Agia Fyla - Palodeia'}],
+    ['10090022', {shortName: '9', longName: 'Leontiou EMEL Station - Agia Fyla - Agia Fyla Lyceum - Palodeia'}],
+    ['10110011', {
+        shortName: '11',
+        longName: 'Ag. Athanasios Housing Finance Agency - Enaerios - Ag. Athanasios Industrial Area - Leontiou EMEL Station'
+    }],
+    ['10110012', {
+        shortName: '11',
+        longName: 'Leontiou EMEL Station - Ag. Athanasios Industrial Area - Enaerios - Ag. Athanasios Housing Finance Agency'
+    }],
+    ['10120011', {shortName: '12', longName: 'Moutagiaka - Leontiou EMEL Station'}],
+    ['10120012', {shortName: '12', longName: 'Leontiou EMEL Station - Moutagiaka'}],
+    ['10130011', {shortName: '13', longName: 'Germasogia - Leontiou EMEL Station'}],
+    ['10130012', {shortName: '13', longName: 'Leontiou EMEL Station - Germasogia'}],
+    ['10140011', {shortName: '14', longName: 'Estias (Agios Athanasios) - Leontiou EMEL Station'}],
+    ['10140012', {shortName: '14', longName: 'Leontiou EMEL Station - Estias (Agios Athanasios)'}],
+    ['10150011', {shortName: '15', longName: 'General Hospital - Makariou - Leontiou EMEL Station'}],
+    ['10150012', {shortName: '15', longName: ' Leontiou EMEL Station - Makariou - General Hospital'}],
+    ['10160021', {
+        shortName: '16',
+        longName: 'Kourion Beach - Agios Ermogenis - Episkopi - Episkopiana Hotel - Leontiou EMEL Station'
+    }],
+    ['10160022', {
+        shortName: '16',
+        longName: 'Leontiou EMEL Station - Episkopiana Hotel - Episkopi - Agios Ermogenis - Kourion Beach'
+    }],
+    ['10170011', {shortName: '17', longName: 'Kolossi (Castle) - Leontiou EMEL Station'}],
+    ['10170012', {shortName: '17', longName: 'Leontiou EMEL Station - Kolossi (Castle)'}],
+    ['10180021', {
+        shortName: '18',
+        longName: 'Kourion Beach - Agios Ermogenis - Ipsonas - Agios Silas - General Hospital - My Mall'
+    }],
+    ['10180022', {
+        shortName: '18',
+        longName: 'My Mall - General Hospital - Agios Silas - Ypsonas - Agios Ermogenis - Kourion Beach'
+    }],
+    ['10190011', {shortName: '19', longName: 'Ellados (Trachoni) - Leontiou EMEL Station'}],
+    ['10190012', {shortName: '19', longName: 'Leontiou EMEL Station - Ellados (Trachoni)'}],
+    ['10200011', {shortName: '20', longName: 'Taki Christodoulou - My Mall - Agios Nikolaos Fire Brigate'}],
+    ['10200012', {shortName: '20', longName: 'My Mall - Taki Christodoulou'}],
+    ['10210011', {shortName: '21', longName: 'My Mall - Makariou Avenue - Kolonakiou'}],
+    ['10210012', {shortName: '21', longName: 'Kolonakiou - Makariou Avenue - My Mall'}],
+    ['10230011', {shortName: '23', longName: 'Ypsonas High School - Ypsonas Centre'}],
+    ['10230012', {shortName: '23', longName: 'Ypsonas Centre - Ypsonas High School'}],
+    ['10230021', {shortName: '23', longName: 'Ypsonas Municipality - Ypsonas'}],
+    ['10240011', {shortName: '24', longName: 'Akrotiri - Asomatos -Trachoni - Leontiou EMEL Station'}],
+    ['10240012', {shortName: '24', longName: 'Leontiou EMEL Station - Trachoni - Akrotiri'}],
+    ['10250011', {shortName: '25', longName: 'Agios Tychonas - Leontiou EMEL Station'}],
+    ['10250012', {shortName: '25', longName: 'Leontiou EMEL Station - Agios Tychonas'}],
+    ['10250021', {shortName: '25', longName: 'Agios Tychonas - Enaerios - Leontiou EMEL Station'}],
+    ['10250022', {shortName: '25', longName: 'Leontiou EMEL Station - Enaerios - Agios Tychonas'}],
+    ['10260011', {shortName: '26', longName: 'Agios Tychonas - Mouttagiaka - Leontiou EMEL Station'}],
+    ['10260012', {shortName: '26', longName: 'Leontiou EMEL Station - Mouttagiaka - Agios Tychonas'}],
+    ['10260021', {shortName: '26', longName: 'Agios Tychonas - Armenochori - Mouttagiaka - Leontiou EMEL Station'}],
+    ['10260022', {shortName: '26', longName: 'Leontiou EMEL Station - Mouttagiaka - Armenochori - Agios Tychonas'}],
+    ['10270011', {shortName: '27', longName: 'Erimi - Kolossi - Leontiou EMEL Station'}],
+    ['10270012', {shortName: '27', longName: 'Leontiou EMEL Station - Kolossi - Erimi'}],
+    ['10270021', {shortName: '27', longName: 'Erimi - Kolossi - Ypsonas - Leontiou EMEL Station'}],
+    ['10270022', {shortName: '27', longName: 'Leontiou EMEL Station - Ypsonas - Kolossi - Erimi'}],
+    ['10300011', {shortName: '30', longName: 'My Mall - New Port - Parklane Ηotel'}],
+    ['10300012', {shortName: '30', longName: 'Parklane Hotel - New Port - My Mall'}],
+    ['10300021', {shortName: '30', longName: 'Municipal Art Gallery - Parklane Hotel'}],
+    ['10300031', {shortName: '30', longName: 'Old Port - Parklane Ηotel'}],
+    ['10300042', {shortName: '30', longName: 'Parklane Hotel - New Port - Casino - My Mall'}],
+    ['10320011', {shortName: '32', longName: 'City Centre'}],
+    ['10330011', {
+        shortName: '33',
+        longName: 'Limassol Marina - My Mall - Waterpark - Kolossi (Castle) - Kourion Beach - Episkopi (UK Sov. Bases)'
+    }],
+    ['10330012', {
+        shortName: '33',
+        longName: 'Episkopi (UK Sov. Bases) - Kourion Beach - Kolossi (Castle) - Waterpark - My Mall - Limassol Marina'
+    }],
+    ['10350011', {shortName: '35', longName: 'New Port - Old Port'}],
+    ['10350012', {shortName: '35', longName: 'Old Port - New Port'}],
+    ['10400011', {shortName: '40', longName: 'Omodos - Pachna - Ag. Amvrosios - Kantou - Lemesos'}],
+    ['10400012', {shortName: '40', longName: 'Lemesos - Kantou - Ag. Amvrosios - Pachna - Omodos'}],
+    ['10400021', {shortName: '40', longName: 'Omodos- Pachna- Ag. Amvrosios- Kantou- Ypsonas- Lemesos'}],
+    ['10400022', {shortName: '40', longName: 'Lemesos- Ypsonas- Kantou- Ag. Amvrosios- Pachna- Omodos'}],
+    ['10400031', {shortName: '40', longName: 'Omodos-Pachna-Ag. Amvrosios-Kantou-New Hospital-Lemesos'}],
+    ['10400032', {shortName: '40', longName: 'Lemesos-New Hospital-Kantou-Ag. Amvrosios-Pachna-Omodos'}],
+    ['10500011', {shortName: '50', longName: 'Agros - Agios Ioannis - Kalo Chorio - Lemesos'}],
+    ['10500012', {shortName: '50', longName: 'Lemesos - Kalo Chorio - Agios Ioannis - Agros'}],
+    ['10600011', {shortName: '60', longName: 'Pelendri - Saittas - Lemesos'}],
+    ['10600012', {shortName: '60', longName: 'Lemesos - Saittas - Pelendri'}],
+    ['10600021', {shortName: '60', longName: 'Pelendri - Saittas - Ypsonas Ind. Area - Lemesos'}],
+    ['10600022', {shortName: '60', longName: 'Lemesos - Ypsonas Ind. Area - Saittas - Pelendri'}],
+    ['10600031', {shortName: '60', longName: 'Pelendri - Saittas - Doros - Lemesos'}],
+    ['10600041', {
+        shortName: '60',
+        longName: 'Pelendri - Polemidia - Ypsonas Industrial Area - Fragklinou Rousvelt - Leontiou EMEL Station'
+    }],
+    ['10600042', {
+        shortName: '60',
+        longName: 'Leontiou EMEL Station - Fragklinou Rousvelt - Ypsonas Industrial Area - Polemidia - Pelendri'
+    }],
+    ['10610011', {shortName: '61', longName: 'Saittas - Lemesos'}],
+    ['10610012', {shortName: '61', longName: 'Lemesos - Saittas'}],
+    ['10620011', {shortName: '62', longName: 'Platres - Lemesos'}],
+    ['10620012', {shortName: '62', longName: 'Lemesos - Platres'}],
+    ['10640011', {shortName: '64', longName: 'Botanic Garden - Troodos - Saittas - Lemesos'}],
+    ['10640012', {shortName: '64', longName: 'Lemesos - Saittas - Troodos - Botanic Garden'}],
+    ['10650011', {shortName: '65', longName: 'Agios Mamas - Limnati - Korfi - Apesia - Lemesos'}],
+    ['10650012', {shortName: '65', longName: 'Lemesos - Apesia - Korfi - Limnati - Agios Mamas'}],
+    ['10650021', {
+        shortName: '65',
+        longName: 'Agios Mamas - Limnati - Korfi - Apesia - Agia Fyla High School - Lemesos'
+    }],
+    ['10650022', {
+        shortName: '65',
+        longName: 'Lemesos - Agia Fyla High School - Apesia - Korfi - Limnati - Agios Mamas'
+    }],
+    ['10660011', {shortName: '66', longName: 'Saittas - Pelendri - Agros - Lefkosia'}],
+    ['10660012', {shortName: '66', longName: 'Lefkosia - Agros - Pelendri - Saittas'}],
+    ['10700011', {shortName: '70', longName: 'Pissouri - Avdimou - Lemesos'}],
+    ['10700012', {shortName: '70', longName: 'Lemesos - Avdimou - Pissouri'}],
+    ['10710011', {shortName: '71', longName: 'Prastio - Avdimou - Lemesos'}],
+    ['10710012', {shortName: '71', longName: 'Lemesos - Avdimou - Prastio'}],
+    ['10800011', {shortName: '80', longName: 'Arakapas - Eptagoneia - Kellaki - Parekklisia - Kolonakiou - Lemesos'}],
+    ['10800012', {shortName: '80', longName: 'Lemesos - Kolonakiou - Parekklisia - Kellaki - Eptagoneia - Arakapas'}],
+    ['10900011', {shortName: '90', longName: 'Sanida - Asgata - Moni - Pyrgos - Lemesos'}],
+    ['10900012', {shortName: '90', longName: 'Lemesos - Pyrgos - Moni - Asgata - Sanida'}],
+    ['10910011', {shortName: '91', longName: 'Monagrouli - Moni - Lemesos'}],
+    ['10910012', {shortName: '91', longName: 'Lemesos - Moni - Monagrouli'}],
+    ['10950011', {shortName: '95', longName: 'Kalavasos - Zygi - Pentakomo - Lemesos'}],
+    ['10950012', {shortName: '95', longName: 'Lemesos - Pentakomo - Zygi - Kalavasos'}],
+    ['10960011', {shortName: '96', longName: 'Zygi - Lemesos'}],
+    ['10960012', {shortName: '96', longName: 'Lemesos - Zygi'}],
+    ['15030011', {shortName: '9A', longName: 'Palodeia - Kallithea - Agia Fyla - Leontiou EMEL Station'}],
+    ['15030012', {shortName: '9A', longName: 'Leontiou EMEL Station - Agia Fyla - Kallithea - Palodeia'}],
+    ['15040011', {shortName: '13A', longName: 'Akrounta - Germasogia - Leontiou EMEL Station'}],
+    ['15070011', {shortName: '19A', longName: 'Akrotiri - Asomatos -Trachoni - Leontiou EMEL Station'}],
+    ['15070012', {shortName: '19A', longName: 'Leontiou EMEL Station - Trachoni - Akrotiri'}],
+    ['15080011', {shortName: '25A', longName: 'Armenochori - Agios Tychonas - Leontiou EMEL Station'}],
+    ['15080012', {shortName: '25A', longName: 'Leontiou EMEL Station - Agios Tychonas - Armenochori'}],
+    ['15080021', {shortName: '25A', longName: 'Armenochori - Linopetra High School & Lyceum - Leontiou EMEL Station'}],
+    ['15080022', {shortName: '25A', longName: 'Armenochori - Linopetra High School & Lyceum - Leontiou EMEL Station'}],
+    ['15080031', {shortName: '25A', longName: 'Armenochori - Agios Tychonas - Enaerios - Leontiou EMEL Station'}],
+    ['15080032', {shortName: '25A', longName: 'Leontiou EMEL Station - Enaerios - Agios Tychonas - Armenochori'}],
+    ['15100011', {shortName: '30N', longName: 'My Mall - New Port - Parklane Hotel'}],
+    ['15100012', {shortName: '30N', longName: 'Parklane Hotel - New Port - My Mall'}],
+    ['15100022', {shortName: '30N', longName: 'Parklane Hotel - New Port - Casino - My Mall'}],
+    ['15110011', {shortName: '90A', longName: 'Lemesos - Moni - Pentakomo'}],
+    ['15110012', {shortName: '90A', longName: 'Pentakomo - Moni - Lemesos'}],
+    ['15110021', {shortName: '90A', longName: 'Pentakomo - Moni - Lemesos'}],
+    ['15110022', {shortName: '90A', longName: 'Lemesos - Moni - Pentakomo'}],
+    ['15120011', {shortName: '95A', longName: 'Lemesos - Governors Beach'}],
+    ['15120012', {shortName: '95A', longName: 'Governors Beach - Lemesos'}],
+    ['15140011', {shortName: '13B', longName: 'Foinikaria - Germasogia - Leontiou EMEL Station'}],
+    ['15140012', {shortName: '13B', longName: 'Leontiou EMEL Station - Germasogia - Foinikaria'}],
+    ['15150011', {shortName: '13E', longName: 'Foinikaria - Akrounta - Germasogia - Leontiou EMEL Station'}],
+    ['15150012', {shortName: '13E', longName: 'Leontiou EMEL Station - Germasogia - Foinikaria - Akrounta'}],
+    ['15220011', {shortName: '14B', longName: 'Mathikoloni - Agios Athanasios - Leontiou EMEL Station'}],
+    ['15220012', {shortName: '14B', longName: 'Leontiou EMEL Station - Agios Athanasios - Mathikoloni'}],
+    ['15240011', {shortName: '32B', longName: 'Apollonia student halls - Old Market - TEPAK'}],
+    ['15240012', {shortName: '32B', longName: 'Old Market - TEPAK - Apollonia student halls'}],
+    ['15250011', {shortName: '40A', longName: 'Agios Nikolaos - Arsos - Malia'}],
+    ['15250012', {shortName: '40A', longName: 'Malia - Arsos - Agios Nikolaos'}],
+    ['15250021', {shortName: '40A', longName: 'Agios Nikolaos - Arsos - Malia - Vasa - Malia'}],
+    ['15250022', {shortName: '40A', longName: 'Malia - Vasa - Malia - Arsos - Agios Nikolaos'}],
+    ['15260011', {shortName: '40B', longName: 'Dora - Malia'}],
+    ['15260012', {shortName: '40B', longName: 'Malia - Dora'}],
+    ['15260021', {shortName: '40B', longName: 'Dora - Malia - Potamiou - Malia'}],
+    ['15260022', {shortName: '40B', longName: 'Malia - Potamiou - Malia - Dora'}],
+    ['15270011', {shortName: '40E', longName: 'Potamiou - Vasa'}],
+    ['15270012', {shortName: '40E', longName: 'Vasa - Potamiou'}],
+    ['15280011', {shortName: '40H', longName: 'Lofou - Agios Therapon'}],
+    ['15280012', {shortName: '40H', longName: 'Agios Therapon - Lofou'}],
+    ['15280021', {shortName: '40H', longName: 'Lofou - Agios Therapon - Souni - Kantou'}],
+    ['15280022', {shortName: '40H', longName: 'Kantou - Souni - Agios Therapon - Lofou'}],
+    ['15290011', {shortName: '40K', longName: 'Zanakia - Souni - Sotira (Circular)'}],
+    ['15300011', {shortName: '40M', longName: 'Vouni - Agios Amvrosios (Circular)'}],
+    ['15300021', {shortName: '40M', longName: 'Vouni -  Agios Amvrosios - Zanakia - Sotira - Kantou'}],
+    ['15300022', {shortName: '40M', longName: 'Kantou - Sotira - Zanakia -  Agios Amvrosios - Vouni'}],
+    ['15310011', {shortName: '40P', longName: 'Kyvides - Pachna Health Centre'}],
+    ['15310012', {shortName: '40P', longName: 'Pachna Health Centre - Kyvides'}],
+    ['15320011', {shortName: '50A', longName: 'Kato Milos - Agios Ioannis - Agios Theodoros - Papoutsa'}],
+    ['15320012', {shortName: '50A', longName: 'Papoutsa - Agios Theodoros - Agios Ioannis - Kato Milos'}],
+    ['15330011', {shortName: '50B', longName: 'Kyperounta - Dymes - Potamitissa - Kato Mylos'}],
+    ['15330012', {shortName: '50B', longName: 'Kato Mylos - Potamitissa - Dymes - Kyperounta'}],
+    ['15340011', {shortName: '50E', longName: 'Kato Mylos - Agios Ioannis - Agros - Agridia - Kyperounta Hospital'}],
+    ['15340012', {shortName: '50E', longName: 'Kyperounta Hospital - Agridia - Agros - Agios Ioannis - Kato Mylos'}],
+    ['15350011', {shortName: '50H', longName: 'Agios Theodoros - Zoopigi - Kalo Chorio'}],
+    ['15350012', {shortName: '50H', longName: 'Kalo Chorio - Zoopigi - Agios Theodoros'}],
+    ['15350021', {shortName: '50H', longName: 'Agios Theodoros - Zoopigi - Kalo Chorio'}],
+    ['15350022', {shortName: '50H', longName: 'Kalo Chorio - Zoopigi'}],
+    ['15360011', {shortName: '50K', longName: 'Agios Konstantinos - Agios Pavlos - Louvaras - Kalo Chorio'}],
+    ['15360012', {shortName: '50K', longName: 'Kalo Chorio - Louvaras - Ag. Pavlos - Ag. Konstantinos'}],
+    ['15360022', {shortName: '50K', longName: 'Kalo Chorio - Louvaras - Kalo Chorio - Ag. Pavlos - Ag. Konstantinos'}],
+    ['15370011', {shortName: '50M', longName: 'Apsiou - Gerasa'}],
+    ['15370012', {shortName: '50M', longName: 'Gerasa - Apsiou'}],
+    ['15380011', {shortName: '50P', longName: 'Fasoula - Spitali - Paramytha'}],
+    ['15380012', {shortName: '50P', longName: 'Paramytha - Spitali - Fasoula'}],
+    ['15390011', {shortName: '50T', longName: 'Agridia - Kyperounta'}],
+    ['15390012', {shortName: '50T', longName: 'Kyperounta - Agridia'}],
+    ['15400011', {shortName: '60A', longName: 'Pelendri - Saittas'}],
+    ['15400012', {shortName: '60A', longName: 'Saittas - Pelendri'}],
+    ['15410011', {
+        shortName: '60B',
+        longName: 'Kouka - Silikou - Ag. Georgios - Monagri - Doros - Distrato Doros-Laneia'
+    }],
+    ['15410012', {shortName: '60B', longName: 'Doros - Silikou - Kouka'}],
+    ['15420011', {shortName: '60E', longName: 'Koilani - Pera Pedi - Moniatis - Saittas'}],
+    ['15420012', {shortName: '60E', longName: 'Saittas - Moniatis - Pera Pedi - Koilani'}],
+    ['15430011', {shortName: '60H', longName: 'Potamitissa - Pelendri - Fylagra - Kyperounta Hospital'}],
+    ['15430012', {shortName: '60H', longName: 'Kyperounta Hospital - Fylagra - Pelendri - Potamitissa'}],
+    ['15440011', {shortName: '60K', longName: 'Chandria - Kyperounta - Saittas'}],
+    ['15440012', {shortName: '60K', longName: 'Saittas - Kyperounta - Chandria'}],
+    ['15460011', {
+        shortName: '60P',
+        longName: 'Saittas - Moniatis - Pera Pedi - Koilani - Mandria - Kato Platres - Pano Platres - Foini'
+    }],
+    ['15460012', {
+        shortName: '60P',
+        longName: 'Foini - Pano Platres - Kato Platres - Mandria - Koilani - Pera Pedi - Moniatis - Saittas'
+    }],
+    ['15470011', {shortName: '62A', longName: 'Kaminaria - Treis Elies - Agios Dimitrios'}],
+    ['15470012', {shortName: '62A', longName: 'Agios Dimitrios - Treis Elies - Kaminaria'}],
+    ['15480011', {shortName: '62B', longName: 'Prodromos - Lemythou - Foini - Pano Platres - Mandria - Saittas'}],
+    ['15480012', {shortName: '62B', longName: 'Saittas - Mandria - Pano Platres - Foini - Lemythou - Prodromos'}],
+    ['15490011', {shortName: '62E', longName: 'Prodromos - Lemythou - Saittas'}],
+    ['15490012', {shortName: '62E', longName: 'Saittas - Lemythou - Prodromos'}],
+    ['15500011', {
+        shortName: '62H',
+        longName: 'Foini - Platres - Mandria - Pera Pedi - Moniatis - Saittas - Amiantos - Kyperounta Hospital'
+    }],
+    ['15500012', {
+        shortName: '62H',
+        longName: 'Kyperounta Hospital - Amiantos - Saittas - Moniatis - Pera Pedi - Mandria - Platres - Foini'
+    }],
+    ['15510011', {
+        shortName: '62K',
+        longName: 'Kaminaria - Treis Elies - Ag. Dimitrios - Paliomylos - Lemythou - Prodromos - Troodos - Kyperounta Hospital'
+    }],
+    ['15510012', {
+        shortName: '62K',
+        longName: 'Kyperounta Hospital - Troodos - Prodromos - Lemythou - Paliomylos - Ag. Dimitrios - Treis Elies - Kaminaria'
+    }],
+    ['15520011', {
+        shortName: '62M',
+        longName: 'Prodromos - Lemythou - Kaminaria - Treis Elies - Agios Dimitrios - Saittas'
+    }],
+    ['15520012', {
+        shortName: '62M',
+        longName: 'Saittas - Agios Dimitrios - Treis Elies - Kaminaria - Lemythou - Prodromos'
+    }],
+    ['15530011', {shortName: '62P', longName: 'Prodromos - Lemythou - Distrato Ag. Dimitriou - Kaminaria'}],
+    ['15530012', {shortName: '62P', longName: 'Kaminaria - Distrato Ag. Dimitriou - Lemythou - Prodromos'}],
+    ['15540011', {shortName: '62T', longName: 'Platres - Saittas'}],
+    ['15540012', {shortName: '62T', longName: 'Saittas - Platres'}],
+    ['15550011', {shortName: '62X', longName: 'Distrato Ag. Dimitriou - Lemythou - Prodromos'}],
+    ['15550012', {shortName: '62X', longName: 'Prodromos - Lemythou - Distrato Ag. Dimitriou'}],
+    ['15560011', {shortName: '62Y', longName: 'Saittas - Platania'}],
+    ['15560012', {shortName: '62Y', longName: 'Platania - Saittas'}],
+    ['15580011', {shortName: '63A', longName: 'Amiantos - Saittas'}],
+    ['15580012', {shortName: '63A', longName: 'Saittas - Amiantos'}],
+    ['15590011', {shortName: '64A', longName: 'Saittas - Platres - Troodos'}],
+    ['15590012', {shortName: '64A', longName: 'Troodos - Platres - Saittas'}],
+    ['15600011', {shortName: '66A', longName: 'Dymes - Potamitissa'}],
+    ['15600012', {shortName: '66A', longName: 'Potamitissa - Dymes'}],
+    ['15610011', {shortName: '70A', longName: 'Avdimou - Anogyra'}],
+    ['15610012', {shortName: '70A', longName: 'Anogyra - Avdimou'}],
+    ['15620011', {shortName: '70B', longName: 'Pissouri - Avdimou'}],
+    ['15620012', {shortName: '70B', longName: 'Avdimou - Pissouri'}],
+    ['15630011', {shortName: '70E', longName: 'Alektora - Agios Thomas - Platanistia - Avdimou'}],
+    ['15630012', {shortName: '70E', longName: 'Avdimou - Platanistia - Agios Thomas - Alektora'}],
+    ['15640011', {shortName: '70H', longName: 'Pissouri - Cyta - Columbia'}],
+    ['15640012', {shortName: '70H', longName: 'Columbia - Cyta - Pissouri'}],
+    ['15650011', {shortName: '70K', longName: 'Avdimou - Petra tou Romiou'}],
+    ['15650012', {shortName: '70K', longName: 'Petra tou Romiou - Avdimou'}],
+    ['15660011', {shortName: '70M', longName: 'Avdimou - Pachna Health Centre'}],
+    ['15660012', {shortName: '70M', longName: 'Pachna Health Centre - Avdimou'}],
+    ['15670011', {shortName: '80A', longName: 'Profitis Ilias - Sykopetra - Arakapas'}],
+    ['15670012', {shortName: '80A', longName: 'Arakapas - Sykopetra - Profitis Ilias'}],
+    ['15680011', {shortName: '80B', longName: 'Akapnou - Eptagoneia'}],
+    ['15680012', {shortName: '80B', longName: 'Eptagoneia - Akapnou'}],
+    ['15690011', {shortName: '80E', longName: 'Melini - Eptagoneia'}],
+    ['15690012', {shortName: '80E', longName: 'Eptagoneia - Melini'}],
+    ['15700011', {shortName: '80H', longName: 'Prastio - Panagia Glossa - Kellaki'}],
+    ['15700012', {shortName: '80H', longName: 'Kellaki - Panagia Glossa - Prastio'}],
+    ['15710011', {shortName: '80K', longName: 'Vikla - Klonari - Kellaki'}],
+    ['15710012', {shortName: '80K', longName: 'Kellaki - Klonari - Vikla'}],
+    ['15720011', {shortName: '90B', longName: 'Pentakomo - Moni'}],
+    ['15720012', {shortName: '90B', longName: 'Moni - Pentakomo'}],
+    ['15740011', {shortName: '62AA', longName: 'Prodromos - Lemythou - Palaiomylos - Foini - Kato Platres'}],
+    ['15740012', {shortName: '62AA', longName: 'Kato Platres - Foini - Palaiomylos - Lemythou - Prodromos'}],
+    ['15750011', {shortName: '80M', longName: 'Dierona - Arakapas'}],
+    ['15750012', {shortName: '80M', longName: 'Arakapas - Dierona'}],
+    ['15760011', {shortName: '5B', longName: 'General Hospital - Pylones - Agios Ioannis - Leontiou EMEL Station'}],
+    ['15760012', {shortName: '5B', longName: 'Leontiou EMEL Station - Agios Ioannis - Pylones - General Hospital'}],
+    ['15760021', {
+        shortName: '5B',
+        longName: 'General Hospital - Pylones - Elaion Park - Agios Ioannis - Leontiou EMEL Station'
+    }],
+    ['15760022', {
+        shortName: '5B',
+        longName: 'Leontiou EMEL Station - Agios Ioannis - Pylones - Elaion Park - General Hospital'
+    }],
+    ['15770011', {shortName: '60T', longName: 'Pelendri Circle Line'}],
+    ['15780011', {shortName: '23A', longName: 'Ypsonas Circular Green'}],
+    ['15780021', {shortName: '23A', longName: 'Ypsonas Municipality Circular Green'}],
+    ['15790011', {shortName: '16A', longName: 'Episkopi - Episkopiana Hotel - Leontiou EMEL Station'}],
+    ['15790012', {shortName: '16A', longName: 'Leontiou EMEL Station - Episkopiana Hotel - Episkopi'}],
+    ['100011', {shortName: '10', longName: 'Makario Stadium -  Kok/thia - Makario Stadium'}],
+    ['110011', {shortName: '11', longName: 'Isokratous - Makario Stadium - Solomou Sq.'}],
+    ['110012', {shortName: '11', longName: 'Solomou Sq. - Makario Stadium - Isokratous'}],
+    ['120011', {shortName: '12', longName: 'Al. Panagouli - Makario Stadium - Solomou Sq.'}],
+    ['120012', {shortName: '12', longName: 'Solomou Sq. - Makario Stadium - Al. Panagouli'}],
+    ['130011', {shortName: '13', longName: 'Makario Stadium - Solomou Sq.'}],
+    ['130012', {shortName: '13', longName: 'Solomou Sq. - Makario Stadium'}],
+    ['140011', {shortName: '14', longName: 'Makario Stadium - Europ. Univ. - Solomou Sq.'}],
+    ['140012', {shortName: '14', longName: 'Solomou Sq. - European Univ. - Makario Stadium'}],
+    ['150011', {shortName: '15', longName: 'Lakatameia - Archangelos - Makario Stadium'}],
+    ['150012', {shortName: '15', longName: 'Makario Stadium - Archangelos - Lakatameia'}],
+    ['160011', {shortName: '16', longName: 'Makario Stadium - Nicosia Mall'}],
+    ['160012', {shortName: '16', longName: 'Nicosia Mall - Makario Stadium'}],
+    ['170021', {shortName: '17', longName: 'Anthoupoli - Archangel Michael (via UNDERPASS) - Makario Stadium'}],
+    ['170022', {shortName: '17', longName: 'Makario Stadium - Archangel Michael - TECHNICAL SCHOOL - Anthoupoli'}],
+    ['190011', {shortName: '19', longName: 'Strovolos Station - Prodromou - Solomou Square'}],
+    ['190012', {shortName: '19', longName: 'Solomou Square - Prodromou - Strovolos Station'}],
+    ['220021', {shortName: '22', longName: 'Strovolos Station - P.Lakatamia - Strovolos Station'}],
+    ['230031', {shortName: '23', longName: 'Strovolos - Salaminos/Tseri - Strovolos'}],
+    ['240011', {shortName: '24', longName: 'Ouranou - Konstantinoupoleos - Strovolos Station'}],
+    ['240012', {shortName: '24', longName: 'Strovolou Station - Konstantinoupoleos - Ouranou'}],
+    ['250011', {shortName: '25', longName: 'Strovolos Station - Gen. Hospital Bus Station'}],
+    ['250012', {shortName: '25', longName: 'Gen. Hospital Bus Station - Strovolos Station'}],
+    ['250021', {shortName: '25', longName: 'Strovolos Station - General Hospital'}],
+    ['250022', {shortName: '25', longName: 'General Hospital- Strovolos Station'}],
+    ['260011', {shortName: '26', longName: 'Gen. Hospital - Solomos Square'}],
+    ['260012', {shortName: '26', longName: 'Solomos Square -  Gen. Hospital'}],
+    ['270011', {shortName: '27', longName: 'Strovolos Station - Gen. Hospital Bus Station'}],
+    ['270012', {shortName: '27', longName: 'Gen. Hospital Bus Station - Strovolos Station'}],
+    ['280011', {shortName: '28', longName: 'CYTA Headquarters - Tzon Kenendy - Solomou Square'}],
+    ['280012', {shortName: '28', longName: 'Solomou Square - Tzon Kenendy - CYTA Headquarters'}],
+    ['280021', {shortName: '28', longName: 'Solomou Square - CYTA Headquarters - Solomou Square'}],
+    ['290011', {shortName: '29', longName: 'Gen. Hospital - Cyprus Pedagogical Institute / University of Cyprus'}],
+    ['290012', {shortName: '29', longName: 'Cyprus Pedagogical Institute / University of Cyprus -  Gen. Hospital'}],
+    ['290021', {shortName: '29', longName: 'Gen. Hospital - Cyprus Pedagogigcal Instittue - Morningside School.'}],
+    ['290022', {shortName: '29', longName: 'Morningside school - Cyprus Pedagogical  Institute - General Hospital'}],
+    ['310031', {shortName: '31', longName: 'Solomou Square - Kantaras/Kaimakli - Solomou Square'}],
+    ['320011', {shortName: '32', longName: 'SOPAZ - John Kennedy Avenue - Stasinou Avenue - Solomos Square'}],
+    ['320012', {shortName: '32', longName: 'Solomou square - Stasinou Avenue - John Kenedy Avenue - SOPAZ'}],
+    ['330011', {shortName: '33', longName: 'University of Cyprus / Aglantzia - Solomou Square'}],
+    ['330012', {shortName: '33', longName: 'Solomou Square - University of Cyprus / Aglantzia'}],
+    ['360011', {shortName: '36', longName: 'Geriou - Gen. Hospital Bus Station'}],
+    ['360012', {shortName: '36', longName: 'Gen. Hospital Bus Station - Geriou'}],
+    ['360021', {shortName: '36', longName: 'Geriou - Agios Eleftherios - Gen. Hospital Bus Station'}],
+    ['360022', {shortName: '36', longName: 'Gen. Hospital Bus Station - Agios Eleftherios - Geriou'}],
+    ['380011', {shortName: '38', longName: 'Gen. Hospital - Univ. of Cyprus'}],
+    ['380012', {shortName: '38', longName: 'Univ. of Cyprus - Gen. Hospital'}],
+    ['380021', {shortName: '38', longName: 'Geri Industrial Area - Gen. Hospital - University of Cyprus'}],
+    ['380022', {shortName: '38', longName: 'University of Cyprus - Gen. Hospital - Geri Industrial Area'}],
+    ['390011', {shortName: '39', longName: 'Geri - Univ. of Cyprus'}],
+    ['390012', {shortName: '39', longName: 'Univ. of Cyprus - Geri'}],
+    ['410011', {shortName: '41', longName: 'Makario Stadium - Univ. of Cyprus'}],
+    ['410012', {shortName: '41', longName: 'Univ. of Cyprus - Makario Stadium'}],
+    ['410021', {shortName: '41', longName: 'Makario Stadium - Univ. of Cyprus (via SCHOOL)'}],
+    ['410022', {shortName: '41', longName: 'Univ. of Cyprus - Makario Stadium (via SCHOOL)'}],
+    ['420011', {shortName: '42', longName: 'Makario Stadium - SOPAZ'}],
+    ['420012', {shortName: '42', longName: 'SOPAZ - Makario Stadium'}],
+    ['430011', {shortName: '43', longName: 'Strovolos Station - Univ. of Cyprus'}],
+    ['430012', {shortName: '43', longName: 'University Of Cyprus - Strovolos Station'}],
+    ['440011', {shortName: '44', longName: 'Strovolos St. - Univ. Of Cyprus'}],
+    ['440012', {shortName: '44', longName: 'Univ. of Cyprus - Strovolos St.'}],
+    ['440021', {shortName: '44', longName: 'Strovolos St - Univ. of Cyprus'}],
+    ['440022', {shortName: '44', longName: 'University of Cyprus - Strovolos St'}],
+    ['460011', {shortName: '46', longName: 'Makario Bus Station - Strovolos St.- Univ. of Cyprus'}],
+    ['460012', {shortName: '46', longName: 'Univ. of Cyprus - Strovolos St.- Makario Bus Station'}],
+    ['470011', {shortName: '47', longName: 'Makario Stadium - Gen. Hospital'}],
+    ['470012', {shortName: '47', longName: 'Gen. Hospital - Makario Stadium'}],
+    ['480011', {shortName: '48', longName: 'Anthoupoli - Univ. of Cyprus'}],
+    ['480012', {shortName: '48', longName: 'Univ. of Cyprus - Anthoupoli'}],
+    ['500011', {shortName: '50', longName: 'Agia Anna - Psevda - Alampra Bus Station'}],
+    ['500012', {shortName: '50', longName: 'Alampra Bus Station - Psevda - Agia Anna'}],
+    ['510011', {shortName: '51', longName: 'Sia - Mosfiloti - Alampra - Alampra Bus Station'}],
+    ['510012', {shortName: '51', longName: 'Alampra Bus Station - Alampra - Mosfiloti - Sia'}],
+    ['520011', {shortName: '52', longName: 'Potamia - Dali - Alampra Bus Station'}],
+    ['520012', {shortName: '52', longName: 'Alampra Bus Station - Dali - Potamia'}],
+    ['520021', {shortName: '52', longName: 'Potamia - Dali - Pera Chorio - Alampra Bus Station'}],
+    ['520022', {shortName: '52', longName: 'Alampra - Pera Chorio - Dali - Potamia'}],
+    ['530011', {shortName: '53', longName: 'Pyrga - Kornos - Alampra Bus Station'}],
+    ['530012', {shortName: '53', longName: 'Alampra Bus Station - Kornos - Pyrga'}],
+    ['540011', {shortName: '54', longName: 'Lythrodontas - Mathiatis - Ag. Varvara - Alampra Bus Station'}],
+    ['540012', {shortName: '54', longName: 'Alampra Bus Station - Ag. Varvara - Mathiatis - Lythrodontas'}],
+    ['540021', {shortName: '54', longName: 'Lythrodontas  (Dorou Loizou) - Mathiatis - Ag. Varvara - Alampra Bus St'}],
+    ['540022', {shortName: '54', longName: 'Alampra Bus St- Ag. Varvara - Mathiatis - Lythrodontas (Dorou Loizou)'}],
+    ['560011', {shortName: '56', longName: 'Athienou - Lympia - Alampra Bus Station'}],
+    ['560012', {shortName: '56', longName: 'Alampra Bus Station - Lympia - Athienou'}],
+    ['560021', {shortName: '56', longName: 'Athienou - Alampra Bus Station (via HIGHWAY)'}],
+    ['560022', {shortName: '56', longName: 'Alampra Bus Station - Athienou (via HIGHWAY)'}],
+    ['570011', {shortName: '57', longName: 'Dali - Alampra Bus Station'}],
+    ['570012', {shortName: '57', longName: 'Alampra Bus Station - Dali'}],
+    ['590011', {shortName: '59', longName: 'Marki - Kotsiatis - Alampra Bus Station'}],
+    ['590012', {shortName: '59', longName: 'Alampra Bus Station - Kotsiatis - Marki'}],
+    ['600011', {shortName: '60', longName: 'Mitsero - Agrokipia - Ag. Ioannis - Tamasos Bus Station'}],
+    ['600012', {shortName: '60', longName: 'Tamasos Bus Station - Ag. Ioannis - Agrokipia - Mitsero'}],
+    ['610011', {shortName: '61', longName: 'Alithinou - Polystypos - Mitsero - Tamasos Bus Station'}],
+    ['610012', {shortName: '61', longName: 'Tamasos Bus Station - Mitsero - Polystypos - Alithinou'}],
+    ['620011', {shortName: '62', longName: 'Palaichori - Ag Sotira - Apliki - Ag. Epifanios - Tamasos Bus Station'}],
+    ['620012', {shortName: '62', longName: 'Tamasos Bus Station - Ag. Epifanios - Apliki - Ag Sotira - Palaichori'}],
+    ['620021', {shortName: '62', longName: 'Palaichori - Apliki - Ag Epifanios - Tamasos Bus Station'}],
+    ['620022', {shortName: '62', longName: 'Tamasos Station - Ag Epifanios - Apliki - Palaichori'}],
+    ['630011', {shortName: '63', longName: 'Fterikoudi - Askas - Palaichori'}],
+    ['630012', {shortName: '63', longName: 'Palaichori - Askas - Fterikoudi'}],
+    ['630021', {
+        shortName: '63',
+        longName: 'Fterikoudi - Askas - Palaichori - Apliki - Ag Epifanios - Tamasos Station'
+    }],
+    ['630022', {
+        shortName: '63',
+        longName: 'Tamasos Station - Ag. Epifanios - Apliki - Palaichori - Aksas - Fterikoudi'
+    }],
+    ['630031', {
+        shortName: '63',
+        longName: 'Fterikoudi - Askas - Palaichori - Ag Sotira - Apliki - Ag Epifanios - Tamasos Station'
+    }],
+    ['630032', {
+        shortName: '63',
+        longName: 'Tamasos Station - Ag. Epifanios - Apliki -Ag Sotira - Palaichori - Aksas - Fterikoudi'
+    }],
+    ['640011', {shortName: '64', longName: 'Agros - Palaichori'}],
+    ['640012', {shortName: '64', longName: 'Palaichori - Agros'}],
+    ['640021', {shortName: '64', longName: 'Agros - Palaichori - Apliki - Ag. Epifanios - Tamasos Station'}],
+    ['640022', {shortName: '64', longName: 'Tamasos Station - Ag Epifanios - Apliki - Palaichori - Agros'}],
+    ['640031', {
+        shortName: '64',
+        longName: 'Agros - Palaichori - Ag Sotira - Apliki - Ag. Epifanios - Tamasos Station'
+    }],
+    ['640032', {shortName: '64', longName: 'Tamasos Station - Ag Epifanios - Apliki - Ag Sotira - Palaichori - Agros'}],
+    ['650011', {shortName: '65', longName: 'Kampi - Farmakas - Gourri - Kalo Chorio - Tamasos Bus Station'}],
+    ['650012', {shortName: '65', longName: 'Tamasos Bus St. - Kalo Chorio - Gourri - Farmakas - Kampi'}],
+    ['660011', {shortName: '66', longName: 'Gourri - Kalo Chorio - Malounta - Tamasos Bus Station'}],
+    ['660012', {shortName: '66', longName: 'Tamasos Bus Station - Malounta - Kalo Chorio - Gourri'}],
+    ['670011', {shortName: '67', longName: 'Kalo Chorio - Klirou - Malounta - Tamasos Bus Station'}],
+    ['670012', {shortName: '67', longName: 'Tamasos Bus Station - Malounta - Klirou - Kalo Chorio'}],
+    ['680011', {
+        shortName: '68',
+        longName: 'Kapedes - Kampia - Pera Oreinis - Politiko - Episkopip - Psimolofou - Deftera'
+    }],
+    ['680012', {
+        shortName: '68',
+        longName: 'Deftera - Psimolofou - Episkopio - Politiko - Pera Oreinis - Kampia - Kapedes'
+    }],
+    ['680021', {shortName: '68', longName: 'Kapedes - Pera Oreinis - Episkopio - Deftera'}],
+    ['680022', {shortName: '68', longName: 'Deftera -Psimolofou -Episkopio -Pera Oreinis -Kapedes'}],
+    ['690011', {shortName: '69', longName: 'Ergates - Anagia'}],
+    ['690012', {shortName: '69', longName: 'Anagia - Ergates'}],
+    ['690021', {shortName: '69', longName: 'Ergates - Anagia'}],
+    ['690022', {shortName: '69', longName: 'Anagia - Ergates'}],
+    ['700011', {shortName: '70', longName: 'Deneia - Kokkinotrimithia A Setl. - Kokkinotrimithia'}],
+    ['700012', {shortName: '70', longName: 'Kokkinotrimithia - Kokkinotrimithia A Setl. - Deneia'}],
+    ['710011', {shortName: '71', longName: 'Mammari - Mammari Setl. - Kokkinotrimithia'}],
+    ['710012', {shortName: '71', longName: 'Kokkinotrimithia - Mammari Setl. - Mammari'}],
+    ['720011', {shortName: '72', longName: 'Meniko - Akaki'}],
+    ['720012', {shortName: '72', longName: 'Akaki - Meniko'}],
+    ['730011', {shortName: '73', longName: 'Paliometocho Setl. - Kokkinotrimithia'}],
+    ['730012', {shortName: '73', longName: 'Kokkinotrimithia - Paliometocho Setl.'}],
+    ['740011', {shortName: '74', longName: 'Ave. Agiou Georgiou/Lakatamia - Anthoupoli - Kokkinotrimitia'}],
+    ['740012', {shortName: '74', longName: 'Kokkinotrimithia - Anthoupoli - Ave. Agiou Georgiou/Lakatamia'}],
+    ['750011', {shortName: '75', longName: 'Lagoudera - Xyliatos - Kato Moni - Peristerona'}],
+    ['750012', {shortName: '75', longName: 'Peristerona - Kato Moni - Xyliatos - Lagoudera'}],
+    ['760011', {shortName: '76', longName: 'Xyliatos - Kato Moni - Peristerona'}],
+    ['760012', {shortName: '76', longName: 'Peristerona - Kato Moni - Xyliatos'}],
+    ['770011', {shortName: '77', longName: 'Nikitari - Vyzakia - Potami - Astromeritis'}],
+    ['770012', {shortName: '77', longName: 'Astromeritis - Potami - Vyzakia - Nikitari'}],
+    ['780011', {shortName: '78', longName: 'Ag. Eirini - Kannavia - Vyzakia - Potami - Astromeritis'}],
+    ['780012', {shortName: '78', longName: 'Astromeritis - Potami - Vyzakia - Kannavia - Ag. Eirini'}],
+    ['800011', {shortName: '80', longName: 'Flasou - Linou - Atsas'}],
+    ['800012', {shortName: '80', longName: 'Atsas - Linou - Flasou'}],
+    ['810011', {shortName: '81', longName: 'Prodromos - Pedoulas - Kalopanagiotis - Atsas'}],
+    ['810012', {shortName: '81', longName: 'Atsas - Kalopanagiotis - Pedoulas - Prodromos'}],
+    ['810021', {shortName: '81', longName: 'Prodromos - Pedoulas - Kalopanagiotis - Flasou - Atsas'}],
+    ['810022', {shortName: '81', longName: 'Atsas - Flasou - Kalopanagiotis - Pedoulas - Prodromos'}],
+    ['820011', {shortName: '82', longName: 'Kampos - Tsakkistra - Kikkos - Gerakies - Atsas'}],
+    ['820012', {shortName: '82', longName: 'Atsas - Gerakies - Kikkos - Tsakkistra - Kampos'}],
+    ['830011', {shortName: '83', longName: 'Ag. Theodoros - Evrychou'}],
+    ['830012', {shortName: '83', longName: 'Evrychou - Ag. Theodoros'}],
+    ['840011', {shortName: '84', longName: 'Galata - Evrychou'}],
+    ['840012', {shortName: '84', longName: 'Evrychou - Galata'}],
+    ['840021', {shortName: '84', longName: 'Galata - Kaliana - Evrychou'}],
+    ['840022', {shortName: '84', longName: 'Evrychou - Kaliana - Galata'}],
+    ['850011', {shortName: '85', longName: 'Chandria - Kyperounta - Kakopetria'}],
+    ['850012', {shortName: '85', longName: 'Kakopetria - Kyperounta - Chandria'}],
+    ['860011', {shortName: '86', longName: 'Kourdali - Spilia - Kakopetria'}],
+    ['860012', {shortName: '86', longName: 'Kakopetria - Spilia - Kourdali'}],
+    ['870011', {shortName: '87', longName: 'Troodos - Kakopetria'}],
+    ['870012', {shortName: '87', longName: 'Kakopetria - Troodos'}],
+    ['1010011', {shortName: '101', longName: 'Tamasos Bus Station - Makario Stadium Bus Station'}],
+    ['1010012', {shortName: '101', longName: 'Makario Stadium Bus Station - Tamasos Bus Station'}],
+    ['1560011', {shortName: '56L', longName: 'Lympia - Alampra Ind. Area - Alampra Bus Station'}],
+    ['1560012', {shortName: '56L', longName: 'Alampra Bus Station - Alampra Ind. Area - Lympia'}],
+    ['1680011', {shortName: '68B', longName: 'Pera Oreinis - Politiko - Episkopio - Psimilofou - Deftera'}],
+    ['1680012', {shortName: '68B', longName: 'Deftera - Psimilofou - Episkopio - Politiko - Pera Oreinis'}],
+    ['2230011', {shortName: '23A', longName: 'Analiontas - Tseri'}],
+    ['2230012', {shortName: '23A', longName: 'Tseri - Analiontas'}],
+    ['4000011', {
+        shortName: '400',
+        longName: 'Astromeritis - Peristerona - Akaki - Kokkinotrimithia - Makario Bus Station - Solomou Square'
+    }],
+    ['4000012', {
+        shortName: '400',
+        longName: 'Solomou Square - Makario Bus Station - Nicosia Mall - Kokkinotrimithia - Akaki - Peristerona - Astromeritis'
+    }],
+    ['4000021', {shortName: '400', longName: 'Astromeritis - Makario Stadium Bus Station'}],
+    ['4000022', {shortName: '400', longName: 'Makario Stadium Bus Station - Astromeritis'}],
+    ['4050011', {
+        shortName: '405',
+        longName: 'Kakopetria -Evrychou(MR) - Akaki/Peristerona/Astromeritis(MR) -Kok/mithia-Makario Station-Solomou Sq.-Nicosia/Kolokasi'
+    }],
+    ['4050012', {
+        shortName: '405',
+        longName: 'Nicosia/Kolokasi-Diagorou-Makario St.-Nicosia Mall-Kok/thia - Akaki/Peristerona/Astromeritis(MR)-Evrychou(MR)-Kakopetria'
+    }],
+    ['4050041', {shortName: '405', longName: 'Kakopetria - Astromeritis - Makario Stadium Bus St.'}],
+    ['4050042', {shortName: '405', longName: 'Makario Stadium Bus St. - Astromeritis - Kakopetria'}],
+    ['4070011', {shortName: '407', longName: 'Chandria - Kakopetria - Astromeritis - Gen. Hospital'}],
+    ['4070012', {shortName: '407', longName: 'Gen. Hospital - Astromeritis - Kakopetria - Chandria'}],
+    ['4080021', {shortName: '408', longName: 'Troodos - Kakopetria'}],
+    ['4080022', {shortName: '408', longName: 'Makario St - Kakopetria - Troodos'}],
+    ['5010011', {shortName: '1', longName: 'Makario Stadium - Strovolos St. - Solomou Sq.'}],
+    ['5010012', {shortName: '1', longName: 'Solomou Sq. - Strovolos St. - Makario Stadium'}],
+    ['5020011', {shortName: '2', longName: 'Tamasos Bus Station - Strovolos Station - Solomou Square'}],
+    ['5020012', {shortName: '2', longName: 'Solomou Square - Strovolos St. - Tamasos Bus Station'}],
+    ['5020021', {shortName: '2', longName: 'Lakatameia - Strovolos Station - Solomou Square'}],
+    ['5020022', {shortName: '2', longName: 'Solomou Square - Strovolos St. - Lakatameia'}],
+    ['5030011', {shortName: '3', longName: 'Alampra Bus St. - Gen. Hospital Bus St. - Solomou Square'}],
+    ['5030012', {shortName: '3', longName: 'Solomou Sq. - Alampra Bus St.'}],
+    ['5040011', {shortName: '4', longName: 'Gen. Hospital - Solomou Square'}],
+    ['5040012', {shortName: '4', longName: 'Solomou Square - Gen. Hospital'}],
+    ['5040021', {shortName: '4', longName: ' Calsberg - General - Hospital - Solomou Square.'}],
+    ['5040022', {shortName: '4', longName: 'Solomou Square - General Hospital - Calsberg'}],
+    ['5050011', {shortName: '5', longName: 'Alampra Bus Station - Solomou Square'}],
+    ['5050012', {shortName: '5', longName: 'Solomou Square - Alampra Bus Station'}],
+    ['5050021', {shortName: '5', longName: 'Alambra Station - Industrial Dali - Carlsberg - Highway - Solomos Square'}],
+    ['5050022', {
+        shortName: '5',
+        longName: 'Solomou Square - Highway - Carlsberg - Industrial Dali - Alampra Bus Station'
+    }],
+    ['8010011', {shortName: 'N1', longName: 'Nicosia Mall - Makario Stadium - Solomou Sq.'}],
+    ['8010012', {shortName: 'N1', longName: 'Solomou Sq. - Makario Stadium - Nicosia Mall'}],
+    ['8020011', {shortName: 'N2', longName: 'Makario Stadium - Solomou Sq. - Univ. of Cyprus'}],
+    ['8020012', {shortName: 'N2', longName: 'Univ. of Cyprus - Solomou Sq. - Makario Stadium'}],
+    ['8030011', {shortName: 'N3', longName: 'Makario Stadium - Strovolos St. - Gen. Hospital Station'}],
+    ['8030012', {shortName: 'N3', longName: 'Gen. Hospital Station - Strovolos St. - Makario Stadium'}],
+    ['8040011', {shortName: 'N4', longName: 'Alampra Bus Station - Gen. Hospital Bus Station - Solomou Square'}],
+    ['8040012', {shortName: 'N4', longName: 'Solomou Square - Gen. Hospital Bus Station - Alampra Bus Station'}],
+    ['8050011', {shortName: 'N5', longName: 'Tamasos Bus Station - Strovolos St - Solomou Square'}],
+    ['8050012', {shortName: 'N5', longName: 'Solomou Sq. - Strovolos St. - Tamasos Bus Station'}],
+    ['9010021', {
+        shortName: 'L1',
+        longName: 'Solomos Sq. - City Hall - Ektoros - Palouriotissa - Famagusta Gate - Archbishopric - Solomos Sq.'
+    }],
+    ['50000011', {shortName: '26', longName: 'Nicosia - Pafos'}],
+    ['50000012', {shortName: '26', longName: 'Pafos - Nicosia'}],
+    ['50000021', {shortName: '26', longName: 'Nicosia - Choirokoitia - Pafos'}],
+    ['50000022', {shortName: '26', longName: 'Pafos - Choirokoitia - Nicosia'}],
+    ['50000031', {shortName: '26', longName: 'Nicosia - Agios Georgios Chavouzas - Episkopiana - CUT - Pafos'}],
+    ['50000041', {shortName: '26', longName: 'Nicosia - Alampra - Pafos'}],
+    ['50000042', {shortName: '26', longName: 'Pafos - Alampra - Nicosia'}],
+    ['50000051', {
+        shortName: '26',
+        longName: 'Nicosia - Alampra - Choirokoitia - Ag. Georgios Chavouzas - Episkopiana - EAC - Pafos'
+    }],
+    ['50000052', {shortName: '26', longName: 'Pafos - CUT - EAC - Nicosia'}],
+    ['50000061', {shortName: '26', longName: 'L. Akrita - Nicosia - Pafos'}],
+    ['50000062', {shortName: '26', longName: 'Pafos - Nicosia - L. Akrita'}],
+    ['50000071', {shortName: '26', longName: 'Nicosia - CUT - Pafos'}],
+    ['50000072', {shortName: '26', longName: 'Pafos - CUT - Nicosia'}],
+    ['50010011', {shortName: '23', longName: 'Nicosia - Agia Napa - Paralimni'}],
+    ['50010012', {shortName: '23', longName: 'Paralimni - Agia Napa - Nicosia'}],
+    ['50010021', {shortName: '23', longName: 'Nicosia - Agia Napa - Protaras - Paralimni'}],
+    ['50010022', {shortName: '23', longName: 'Paralimni - Protaras - Agia Napa - Nicosia'}],
+    ['50010031', {shortName: '23', longName: 'Nicosia - Alampra - Paralimni'}],
+    ['50010032', {shortName: '23', longName: 'Paralimni - Protaras - Alampra - Nicosia'}],
+    ['50010042', {shortName: '23', longName: 'Paralimni - Agia Napa - Alampra - Nicosia'}],
+    ['50010052', {shortName: '23', longName: 'Paralimni - Agia Napa - Nicosia (except Gen. Hospital)'}],
+    ['50020011', {shortName: '43', longName: 'Larnaca - Agia Napa - Paralimni'}],
+    ['50020012', {shortName: '43', longName: 'Paralimni - Agia Napa - Larnaca'}],
+    ['50030011', {shortName: '56', longName: 'Limassol - Pafos'}],
+    ['50030012', {shortName: '56', longName: 'Pafos - Limassol'}],
+    ['50030021', {shortName: '56', longName: 'Limassol - Episkopiana - Pafos'}],
+    ['50030022', {shortName: '56', longName: 'Pafos - CUT - Episkopiana - Limassol'}],
+    ['50030032', {shortName: '56', longName: 'Pafos - EAC - Episkopiana - Limassol'}],
+    ['50030041', {shortName: '56', longName: 'Limassol - CUT - Pafos'}],
+    ['50030042', {shortName: '56', longName: 'Pafos - CUT - Limassol'}],
+    ['50040011', {shortName: '45', longName: 'Larnaca - Limassol'}],
+    ['50040012', {shortName: '45', longName: 'Limassol - Larnaca'}],
+    ['50050011', {shortName: '36', longName: 'Paralimni - Ayia Napa - Larnaca - Pafos'}],
+    ['50050012', {shortName: '36', longName: 'Pafos - Larnaca - Ayia Napa - Paralimni'}],
+    ['50060011', {shortName: '25', longName: 'Nicosia - Limassol'}],
+    ['50060012', {shortName: '25', longName: 'Limassol - Nicosia'}],
+    ['50060021', {shortName: '25', longName: 'Nicosia - Alampra - Limassol'}],
+    ['50060022', {shortName: '25', longName: 'Limassol - Alampra - Nicosia'}],
+    ['50070011', {shortName: '42', longName: 'Larnaca - Nicosia'}],
+    ['50070012', {shortName: '42', longName: 'Nicosia - Larnaca'}],
+    ['50070021', {shortName: '42', longName: 'Larnaca (Saint George) - Nicosia'}],
+    ['50070022', {shortName: '42', longName: 'Nicosia - Larnaca (Saint George)'}],
+    ['50070031', {shortName: '42', longName: 'Larnaca - Alampra - Nicosia'}],
+    ['50070032', {shortName: '42', longName: 'Nicosia - Alampra - Larnaca'}],
+    ['50070041', {shortName: '42', longName: 'Larnaca (Port) - Presidential Palace - Nicosia'}],
+    ['50070042', {shortName: '42', longName: 'Nicosia - Presidential Palace - Larnaca'}],
+    ['50070051', {shortName: '42', longName: 'Larnaca - University of Cyprus - Nicosia'}],
+    ['50070052', {shortName: '42', longName: 'Nicosia - University of Cyprus - Larnaca'}],
+    ['50080011', {shortName: '46', longName: 'Larnaca - Limassol - Pafos'}],
+    ['50080012', {shortName: '46', longName: 'Pafos - Limassol - Larnaca'}],
+    ['50080021', {shortName: '46', longName: 'Larnaca - Limassol - CUT - Pafos'}],
+    ['50090011', {shortName: '64', longName: 'Larnaca - Pafos'}],
+    ['50090012', {shortName: '64', longName: 'Pafos - Larnaca'}],
+    ['30000011', {shortName: '601', longName: 'Karavella Station - Geroskipou - Timi - Anarita - Mandria'}],
+    ['30000012', {shortName: '601', longName: 'Mandria - Anarita - Timi - Geroskipou - Karavella Station'}],
+    ['30000021', {
+        shortName: '601',
+        longName: 'Karavella Station - Technical School - Geroskipou - Timi - Anarita - Mandria'
+    }],
+    ['30000022', {
+        shortName: '601',
+        longName: 'Mandria - Anarita - Timi - Geroskipou -Technical School- Karavella Station'
+    }],
+    ['30010011', {
+        shortName: '602',
+        longName: 'Karavella Station - Hospital - Tech. School - Museum - Government offices - Karavella Station'
+    }],
+    ['30020011', {
+        shortName: '603',
+        longName: 'Karavella Station - Government offices - Universal Area - Agapinoros - Tafoi ton Vasileon Station'
+    }],
+    ['30020012', {
+        shortName: '603',
+        longName: 'Tafoi ton Vasileon Station - Agapinoros - Universal Area - Government offices - Karavella Station'
+    }],
+    ['30030011', {
+        shortName: '603B',
+        longName: 'Tafoi ton Vasileon Station - Agapinoros - Universal Area - Al. Papagou (Alfamega)'
+    }],
+    ['30030012', {
+        shortName: '603B',
+        longName: 'Al. Papagou (Alfamega) - Universal Area - Agapinoros - Tafoi ton Vasileon Station'
+    }],
+    ['30040011', {shortName: '604', longName: 'Karavella Station - Chloraka - Emba - Tala - Agios Neofytos Monastery'}],
+    ['30040012', {shortName: '604', longName: 'Agios Neofytos Monastery - Tala - Emba - Chloraka - Karavella Station'}],
+    ['30050011', {
+        shortName: '606',
+        longName: 'Geroskipou (Pafiako) - Geroskipou Beach - Posidonos - Neapolis - Kings Av. Mall - Harbour Station'
+    }],
+    ['30050012', {
+        shortName: '606',
+        longName: 'Harbour Station - Kings Av. Mall - Neapolis - Posidonos - Geroskipou Beach - Geroskipou (Pafiako)'
+    }],
+    ['30050021', {shortName: '606', longName: 'Geroskipou (Pafiako) - Posidonos - Kings Av. Mall - Harbour Station'}],
+    ['30050022', {shortName: '606', longName: 'Harbour Station - Kings Av. Mall - Posidonos - Geroskipou (Pafiako)'}],
+    ['30060011', {shortName: '607', longName: 'Karavella Station - Chloraka - Lemba - Κissonerga - Pegia'}],
+    ['30060012', {shortName: '607', longName: 'Pegia - Κissonerga - Lemba - Chloraka - Κaravella Station'}],
+    ['30070011', {
+        shortName: '608',
+        longName: 'Karavella Station - Immigration - Citizen Service Center - General Hospital - Anavargos'
+    }],
+    ['30070012', {
+        shortName: '608',
+        longName: 'Anavargos - General Hospital - Citizen Service Center - Immigration - Κaravella Station'
+    }],
+    ['30080011', {shortName: '609', longName: 'Karavella Station - Konia - Marathounta - Armou - Episkopi'}],
+    ['30080012', {shortName: '609', longName: 'Episkopi - Armou - Marathounta - Konia - Karavella Station'}],
+    ['30090011', {shortName: '610', longName: 'Harbour Station - Ap. Pavlou - Agapinoros - Municipal Market'}],
+    ['30090012', {shortName: '610', longName: 'Municipal Market - Agapinoros - Ap. Pavlou - Harbour Station'}],
+    ['30100011', {
+        shortName: '611',
+        longName: 'Tafoi Vasileon Station - Harbour Station - Posidonos - Geroskipou Beach (Waterpark)'
+    }],
+    ['30100012', {
+        shortName: '611',
+        longName: 'Geroskipou Beach (Waterpark) - Posidonos - Harbour Station - Tafoi Vasileon Station'
+    }],
+    ['30100021', {
+        shortName: '611',
+        longName: 'Tafoi Vasileon Station - Harbour Station - Posidonos - Geroskipou Beach'
+    }],
+    ['30100022', {
+        shortName: '611',
+        longName: 'Geroskipou Beach - Posidonos - Harbour Station - Tafoi Vasileon Station'
+    }],
+    ['30110011', {
+        shortName: '612',
+        longName: 'Tafoi ton Vasileon Station - Posidonos - Giannaki Talioti Lyceum - Geroskipou - Timi - Pafos Airport'
+    }],
+    ['30110012', {
+        shortName: '612',
+        longName: 'Pafos Airport - Timi - Geroskipou - Giannaki Talioti Lyceum - Posidonos - Tafoi ton Vasileon Station'
+    }],
+    ['30120011', {shortName: '613', longName: 'Karavella Station - Geroskipou - Achelia - Timi - Pafos Airport'}],
+    ['30120012', {shortName: '613', longName: 'Pafos Airport - Timi - Achelia - Geroskipou - Karavella Station'}],
+    ['30130011', {shortName: '614', longName: 'Karavella Station - Tremithousa - Mesogi - Mesa Xorio - Tsada - Koili'}],
+    ['30130012', {shortName: '614', longName: 'Koili - Tsada - Mesa Xorio - Mesogi - Tremithousa - Karavella Station'}],
+    ['30140011', {shortName: '615', longName: 'Tafoi ton Vasileon Station - Potima - Coral Bay'}],
+    ['30140012', {shortName: '615', longName: 'Coral Bay - Potima - Tafoi ton Vasileon Station'}],
+    ['30150011', {shortName: '616', longName: 'Coral Bay - Pegia - Agios Georgios Pegias'}],
+    ['30150012', {shortName: '616', longName: 'Agios Georgios Pegias - Pegia - Coral Bay'}],
+    ['30160011', {shortName: '618', longName: 'Karavella Station - Kennedy Square - Tafoi ton Vasileon Station'}],
+    ['30160012', {shortName: '618', longName: 'Tafoi ton Vasileon Station - Kennedy Square - Karavella Station'}],
+    ['30170011', {shortName: '622', longName: 'Polis Chrysochous - Prodromi - Latchi - Baths of Aphrodite'}],
+    ['30170012', {shortName: '622', longName: 'Baths of Aphrodite - Latchi - Prodromi - Polis Chrysochous'}],
+    ['30180011', {shortName: '623', longName: 'Polis Chrysochous - Prodromi - Neo Chorio'}],
+    ['30180012', {shortName: '623', longName: 'Neo Chorio - Prodromi - Polis Chrysochous'}],
+    ['30190011', {shortName: '624', longName: 'Polis Chrysochous - Pelathousa'}],
+    ['30190012', {shortName: '624', longName: 'Pelathousa - Polis Chrysochous'}],
+    ['30200011', {shortName: '625', longName: 'Polis Chrysochous - Makounta - Kinousa'}],
+    ['30200012', {shortName: '625', longName: 'Kinousa - Makounta - Polis Chrysochous'}],
+    ['30210011', {
+        shortName: '630',
+        longName: 'Karavella Station - Geroskipou - Timi - Kouklia - Petra tou Romiou - Pissouri'
+    }],
+    ['30210012', {
+        shortName: '630',
+        longName: 'Pissouri - Petra tou Romiou - Kouklia - Timi - Geroskipou - Karavella Station'
+    }],
+    ['30220011', {shortName: '631', longName: 'Harbour Station - Posidonos - Geroskipou - Kouklia - Petra tou Romiou'}],
+    ['30220012', {shortName: '631', longName: 'Petra tou Romiou - Kouklia - Geroskipou - Posidonos - Harbour Station'}],
+    ['30220021', {
+        shortName: '631',
+        longName: 'Harbour Station - Posidonos - Geroskipou - Kouklia - Petra tou Romiou - Aphrodite Hills'
+    }],
+    ['30220022', {shortName: '631', longName: 'Aphrodite Hills - Kouklia - Geroskipou - Posidonos - Harbour Station'}],
+    ['30230011', {shortName: '632', longName: 'Paphos - Geroskipou - Kouklia - Archimandrita'}],
+    ['30230012', {shortName: '632', longName: 'Archimandrita - Kouklia - Geroskipou - Paphos'}],
+    ['30230021', {shortName: '632', longName: 'Paphos (Municipal Market Station)-Port-Aphrodite Hills-Archimandrita'}],
+    ['30240011', {
+        shortName: '633',
+        longName: 'Karavella Station - Nikoklia - Fasoula - Mamonia - Prastio - Kedares - Pretori - Filousa - Agios Nikolaos'
+    }],
+    ['30240012', {
+        shortName: '633',
+        longName: 'Agios Nikolaos - Filousa - Pretori - Kedares - Prastio - Mamonia - Fasoula - Nikoklia - Karavella Station'
+    }],
+    ['30250011', {
+        shortName: '634',
+        longName: 'Karavella Station - Choletria - Stavrokonnou - Kelokedara - Salamiou - Mesana - Arminou'
+    }],
+    ['30250012', {
+        shortName: '634',
+        longName: 'Arminou - Mesana - Salamiou - Kelokedara - Stavrokonnou - Choletria - Karavella Station'
+    }],
+    ['30250021', {
+        shortName: '634',
+        longName: 'Karavella Station - Technical School - Choletria - Stavrokonnou - Kelokedara - Salamiou - Mesana - Arminou'
+    }],
+    ['30250022', {
+        shortName: '634',
+        longName: 'Arminou - Mesana - Salamiou - Kelokedara - Stavrokonnou - Choletria - Technical School - Karavella Station'
+    }],
+    ['30260011', {shortName: '635', longName: 'Agios Ioannis - Trachipedoula - Stavrokonnou'}],
+    ['30260012', {shortName: '635', longName: 'Stavrokonnou - Trachipedoula - Agios Ioannis'}],
+    ['30270011', {
+        shortName: '636',
+        longName: 'Karavella St. - Ag. Varvara - Nata - Amargeti - Ag. Marina - Pentalia - Galataria - Kilinia - Statos - Agios Fotios'
+    }],
+    ['30270012', {
+        shortName: '636',
+        longName: 'Agios Fotios - Statos - Kilinia - Galataria - Pentalia - Ag. Marina - Amargeti - Nata - Ag. Varvara - Karavella St.'
+    }],
+    ['30270021', {
+        shortName: '636',
+        longName: 'Karavella St. - Ag. Varvara - Nata - Amargeti - Nea Pentalia - Pentalia - Galataria - Kilinia - Statos - Agios Fotios'
+    }],
+    ['30270022', {
+        shortName: '636',
+        longName: 'Agios Fotios - Statos - Kilinia - Galataria - Pentalia - Nea Pentalia - Amargeti - Nata - Ag. Varvara - Karavella St.'
+    }],
+    ['30270031', {
+        shortName: '636',
+        longName: 'Karavella St. - Technical School - Ag. Varvara - Nata - Nea Pentalia - Pentalia - Galataria - Statos - Agios Fotios'
+    }],
+    ['30270032', {
+        shortName: '636',
+        longName: 'Agios Fotios - Statos - Galataria - Pentalia - Nea Pentalia - Nata - Ag. Varvara - Technical School - Karavella St.'
+    }],
+    ['30280011', {
+        shortName: '637',
+        longName: 'Karavella Station - Tsada - Polemi - Psathi - Ag. Dimitrianos - Kannaviou - Asprogia - Panagia'
+    }],
+    ['30280012', {
+        shortName: '637',
+        longName: 'Panagia - Asprogia - Kannaviou - Ag. Dimitrianos - Psathi - Polemi - Tsada - Karavella Station'
+    }],
+    ['30280021', {
+        shortName: '637',
+        longName: 'Karavella Station - Tsada - Polemi - Psathi - Ag. Dimitrianos - Kannaviou - Asprogia - Panagia'
+    }],
+    ['30280022', {
+        shortName: '637',
+        longName: 'Panagia - Asprogia - Kannaviou - Ag. Dimitrianos - Psathi - Polemi - Tsada - Karavella Station'
+    }],
+    ['30290011', {
+        shortName: '638',
+        longName: 'Ag. Dimitrianos - Milia - Drinia - Drimou - Simou - Lasa - Fiti - Kritou Marottou - Ag. Dimitrianos'
+    }],
+    ['30300011', {shortName: '639', longName: 'Karavella Station - Tsada - Kallepia - Letimpou - Lemona - Choulou'}],
+    ['30300012', {
+        shortName: '639',
+        longName: 'Choulou - Lemona - Letimpou - Kallepia - Tsada (Main Road) - Karavella Station'
+    }],
+    ['30310011', {shortName: '640', longName: 'Polis Chrysochous - Steni - Peristerona - Filousa - Lysos'}],
+    ['30310012', {shortName: '640', longName: 'Lysos - Filousa - Peristerona - Steni - Polis Chrysochous'}],
+    ['30320011', {
+        shortName: '641',
+        longName: 'Polis Chrysochous - Terra - Kritou Terra - Inia - Droushia - Arodes - Kathikas - Theletra - Karavella Station'
+    }],
+    ['30320012', {
+        shortName: '641',
+        longName: 'Paphos - Theletra - Kathikas - Arodes - Droushia - Inia - Kritou Terra - Terra - Polis Chrysochous'
+    }],
+    ['30330011', {
+        shortName: '643A',
+        longName: 'Pachyammos - Pomos - Nea Dimmata - Ag. Marina - Argaka - Polis Chrysochous'
+    }],
+    ['30330012', {
+        shortName: '643A',
+        longName: 'Polis Chrysochous - Argaka - Ag. Marina - Nea Dimmata - Pomos - Pachyammos'
+    }],
+    ['30340011', {
+        shortName: '643B',
+        longName: 'Pachyammos - Pomos - Nea Dimmata - Ag. Marina - Pano Gialia - Argaka - Pano Argaka - Polis Chrysochous'
+    }],
+    ['30340012', {
+        shortName: '643B',
+        longName: 'Polis Chrysochous - Pano Argaka - Argaka - Pano Gialia - Ag. Marina - Nea Dimmata - Pomos - Pachyammos'
+    }],
+    ['30350011', {
+        shortName: '645',
+        longName: 'Polis Chrysochous - Chrysochou - Goudi - Choli - Skoulli - Giolou - Stroumbi - Tsada - Karavella Station'
+    }],
+    ['30350012', {
+        shortName: '645',
+        longName: 'Karavella Station - Tsada - Stroumbi - Giolou - Skoulli - Choli - Goudi - Chrysochou - Polis Chrysochous'
+    }],
+    ['30350021', {
+        shortName: '645',
+        longName: 'Polis Chrysochous - Chrysochou - Goudi - Choli - Skoulli - Giolou - Stroumbi - Tsada - Government Offices - Karavella St'
+    }],
+    ['30350022', {
+        shortName: '645',
+        longName: 'Karavella St.- Government Offices - Tsada - Stroumbi - Giolou - Skoulli - Choli - Goudi - Chrysochou - Polis Chrysochous'
+    }],
+    ['30350031', {
+        shortName: '645',
+        longName: 'Polis Chrysochous - Polis Schools - Chrysochou - Goudi - Choli - Skoulli - Giolou - Stroumbi - Tsada - Karavella St.'
+    }],
+    ['30350032', {
+        shortName: '645',
+        longName: 'Karavella St. - Tsada - Stroumbi - Giolou - Skoulli - Choli - Goudi - Chrysochou - Polis Schools - Polis Chrysochous'
+    }],
+    ['30360011', {
+        shortName: '646',
+        longName: 'Polis Chrysochous - Chrysochou - Goudi - Skoulli - Choli - Akourdalia - Miliou - Giolou'
+    }],
+    ['30360012', {
+        shortName: '646',
+        longName: 'Giolou - Miliou - Akourdalia - Choli - Skoulli - Goudi - Chrysochou - Polis Chrysochous'
+    }],
+    ['30370011', {shortName: '647', longName: 'Polis Chrysochous - Prodromi - Androlykou'}],
+    ['30370012', {shortName: '647', longName: 'Androlykou - Prodromi - Polis Chrysochous'}],
+    ['30380011', {
+        shortName: '648',
+        longName: 'Coral Bay - Pegia - Kathikas - Arodes - Inia - Droushia - Polis Chrysochous'
+    }],
+    ['30380012', {
+        shortName: '648',
+        longName: 'Polis Chrysochous - Droushia - Inia - Arodes - Kathikas - Pegia - Coral Bay'
+    }],
+    ['30390011', {
+        shortName: '649',
+        longName: 'Polis Chrysochous - Chrysochou - Skoulli - Giolou - Stroumpi - Tsada - L. Mesogis - Geroskipou - Timi - Pafos Airport'
+    }],
+    ['30390012', {
+        shortName: '649',
+        longName: 'Pafos Airport - Timi - Geroskipou - L. Mesogis - Tsada - Stroumpi - Giolou - Skoulli - Chrysochou - Polis Chrysochous'
+    }],
+    ['30400011', {shortName: '621', longName: 'Polis Chrysochous - Polis Hospital'}],
+    ['30400012', {shortName: '621', longName: 'Polis Hospital - Polis Chrysochous'}],
+    ['30410011', {
+        shortName: '607B',
+        longName: 'Karavella Station  - Chloraka - Lemba - Κissonerga - Pegeia (Akoursos)'
+    }],
+    ['30410012', {shortName: '607B', longName: 'Pegeia (Akoursos) - Κissonerga -  Lemba  - Chloraka - Karavella'}],
+    ['20000011', {shortName: '430', longName: 'Larnaca Station - Airport - Kiti - Pervolia'}],
+    ['20000012', {shortName: '430', longName: 'Pervolia - Kiti - Airport - Larnaca station'}],
+    ['20000021', {shortName: '430', longName: 'Larnaca Station - Pervo'}],
+    ['20000031', {shortName: '430', longName: 'Larnaca - Pervolia'}],
+    ['20000032', {shortName: '430', longName: 'Pevolia'}],
+    ['20010011', {shortName: '417', longName: 'Larnaca Station - Aradippou'}],
+    ['20010012', {shortName: '417', longName: 'Aradippou - Larnaca Station'}],
+    ['20010021', {shortName: '417', longName: 'Larnaca Station - Industrial Area - Aradippou'}],
+    ['20010022', {shortName: '417', longName: 'Aradippou - Industrial Area - Larnaca Station'}],
+    ['20030011', {shortName: '431', longName: 'Larnaca Station-Airport -  Meneou - Dromolaxia'}],
+    ['20030012', {shortName: '431', longName: 'Dromolaxia - Meneou - Airport - Larnaca St.'}],
+    ['20040011', {shortName: '418', longName: 'Larnaca Station - Lividia - Kellia - Troulloi'}],
+    ['20040012', {shortName: '418', longName: 'Troulloi - Kellia - Livadia - Larnaca Station'}],
+    ['20050011', {shortName: '419', longName: 'Larnaca Station - Oroklini'}],
+    ['20050012', {shortName: '419', longName: 'Oroklini - Larnaca Station'}],
+    ['20050022', {shortName: '419', longName: 'Oroklini - Larnaca Station'}],
+    ['20060011', {shortName: '432', longName: 'Larnaca Station - Airport - Dromoloxia - Kiti - Tersefanou'}],
+    ['20060012', {shortName: '432', longName: 'Tersefanou - Kiti - Dromolaxia - Airport - Larnaca Station'}],
+    ['20070011', {shortName: '420', longName: 'Larnaca Station - Kamares - Kalo Chorio'}],
+    ['20070012', {shortName: '420', longName: 'Kalo Chorio - Kamares - Larnaca Station'}],
+    ['20070021', {shortName: '420', longName: 'Larnaca Station - Kamares - Kalo Chorio'}],
+    ['20070022', {shortName: '420', longName: 'Kalo Chorio - Kamares - (Lyceem) - Larnaca Station'}],
+    ['20070041', {shortName: '420', longName: 'Larnaka - Kalo Chorio'}],
+    ['20070042', {shortName: '420', longName: 'Kalo Chorio - Larnaka'}],
+    ['20080011', {shortName: '421', longName: 'Larnaca Station - Fire Station - Kamares'}],
+    ['20080012', {shortName: '421', longName: 'Kamares - Fire Station - Larnaca Station'}],
+    ['20080021', {shortName: '421', longName: 'Larnaca Station - Kamares - Free Trade Zone - Larnaca Station'}],
+    ['20090011', {shortName: '422', longName: 'Larnaca St. -New Hospital - Vergina'}],
+    ['20090012', {shortName: '422', longName: 'Kamares 2 -Zinonas -Vergina -New Hospital - Larnaca St.'}],
+    ['20090022', {shortName: '422', longName: 'Kamares 2 -Zinonas-Vergina-New Hospital - Larnaca St.'}],
+    ['20090032', {shortName: '422', longName: 'Kamares 2 - Zinonas - Vergina - New Hospital - Larnaca Station'}],
+    ['20100011', {shortName: '418L', longName: 'Larnaca Station - Chrysopolitissa -  Αg. Anargyroi - Livadia'}],
+    ['20100012', {shortName: '418L', longName: 'Livadia - Ag. Anargyroi - Chrysopolotissa - Larnaca'}],
+    ['20100021', {
+        shortName: '418L',
+        longName: 'Larnaca Station - Chrysopolitissa - Ag. Anargyroi-Livadia-Larnaca Station'
+    }],
+    ['20110011', {shortName: '423', longName: 'Larnaca Station- Faneromeni - Drosia Area -Mall'}],
+    ['20110012', {shortName: '423', longName: 'New Hospital - Drosia Area - Faneromeni - Larnaca Station'}],
+    ['20120011', {shortName: '424', longName: 'Larnaca St. -  Finikoudes-Old Hospital-CTO - Pyla'}],
+    ['20120012', {shortName: '424', longName: 'Pyla - CTO - Larnaca Station'}],
+    ['20120021', {shortName: '424', longName: 'Larnaca Station -  Old Hospital-CTO - Pyla'}],
+    ['20120022', {shortName: '424', longName: 'Pyla - CTO - Old Hospital - Larnaca Station'}],
+    ['20120032', {shortName: '424', longName: 'Pyla - Larnaka'}],
+    ['20120041', {shortName: '424', longName: 'Larnaca St - Old Hospital - Pyla'}],
+    ['20120042', {shortName: '424', longName: 'Pyla - Larnaca St'}],
+    ['20150011', {shortName: '425', longName: 'Dekeleia - C.T.O. - Larnaca Station - Foinikoudes- Makenzy - Airport'}],
+    ['20150012', {shortName: '425', longName: 'Airport - Makenzy - Old Hospital - C.T.O. - Dekeleia'}],
+    ['20150021', {shortName: '425', longName: 'Larnaca Station - Foinikoudes - Makenzy - Airport'}],
+    ['20150022', {shortName: '425', longName: 'Airport - Makenzy - Larnaca Station'}],
+    ['20150031', {shortName: '425', longName: 'Dekeleia - C.T.O. - Larnaca Station'}],
+    ['20150032', {shortName: '425', longName: 'Larnaca Station - Harbour - KOT - Dekeleia'}],
+    ['20160011', {
+        shortName: '426',
+        longName: 'Larnaca Station - Kalogera - E.A.C. - New Hospital - Kokkines - Tsiakkilero - Aradippou'
+    }],
+    ['20160012', {
+        shortName: '426',
+        longName: 'Aradippou - Tsiakkilero - Kokkines - New Hospital - E.A.C. - Kalogera - Larnaca Station'
+    }],
+    ['20170011', {
+        shortName: '427',
+        longName: 'Larnaca St. - Harbour - Fire Station - Old Hospital - Foinikoudes - New Hospital - Cineplex - Faneromeni - Larnaca St.'
+    }],
+    ['20170021', {shortName: '427', longName: 'Larnaca.St - Old Hospiital - Foinikoudes - Larnaca St.'}],
+    ['20180011', {shortName: '428', longName: 'Larnaca St. - Tsiakkilero- Aradippou - Pascal Area'}],
+    ['20180012', {shortName: '428', longName: 'Pascal School - Aradippou -Tsiakkilero - Larnaca St.'}],
+    ['20190011', {shortName: '429', longName: 'Larnaca Station - Airport - Faros'}],
+    ['20190012', {shortName: '429', longName: 'Faros - Meneou - Airport - Larnaca Station'}],
+    ['20190022', {shortName: '429', longName: 'Faros - Meneou - Tekke -  Airport - Larnaca Station'}],
+    ['20210011', {shortName: '442', longName: 'Nightly Larnaca Station - Livadia - Kellia - Troulloi'}],
+    ['20210012', {shortName: '442', longName: 'Nightly Troulloi - Kellia - Livadia - Larnaca station'}],
+    ['20220011', {
+        shortName: '443',
+        longName: 'Nightly Larnaca St. -Harbour - Fire St. - Old Hospital -Foinikoudes - New Hospital - Cineplex - Faneromeni - Larnaca St.'
+    }],
+    ['20230011', {
+        shortName: '444',
+        longName: 'Nightly Larnaca St. - Mitropoli - Trifilia - Tsiakkilero- G.S.Z. Stadium- Vergina- Aradippou'
+    }],
+    ['20230012', {
+        shortName: '444',
+        longName: 'Nightly Aradippou - Vergina - G.S.Z. Stadium - Tsiakkilero - Trifilia - Mitropoli - Larnaca Station'
+    }],
+    ['20240011', {
+        shortName: '445',
+        longName: 'Nightly Oroklini - Pyla - Κ.Ο.Τ - Foinikoudes - Makenzy - Larnaca Station'
+    }],
+    ['20240012', {
+        shortName: '445',
+        longName: 'Nightly Larnaca Station - Makenzy - Foinikoudes - Κ.Ο.Τ. - Pyla - Oroklini'
+    }],
+    ['20250011', {
+        shortName: '446',
+        longName: 'Nightly Larnaca Station - Makenzy - Dromoloxia - Tersefanou - Kiti - Pervolia'
+    }],
+    ['20250012', {
+        shortName: '446',
+        longName: 'Nightly Pervolia - Kiti - Tersefanou - Dromoloxia - Airport- Makenzy - Larnaca St.'
+    }],
+    ['20260011', {
+        shortName: '401',
+        longName: 'Mari - Vasiliko - Zygi - Kalavasos - Tochni - Choirokoitia - Kofinou Station'
+    }],
+    ['20260012', {
+        shortName: '401',
+        longName: 'Kofinou Station - Choirokoitia - Tochni - Kalavasos - Zygi - Vasiliko - Mari'
+    }],
+    ['20260021', {shortName: '401', longName: 'Mari-Vasiliko-Zygi-Kalavasos-Tochni- Kofinou Station'}],
+    ['20260022', {shortName: '401', longName: 'Kofinou Station-Tochni-Kalavasos-Zygi-Vasiliko-Mari'}],
+    ['20270011', {shortName: '402', longName: 'Maroni - Psematismenos - Choirokoitia - Kofinou - Kofinou Station'}],
+    ['20270012', {shortName: '402', longName: 'Kofinou Station-  Kofinou - Choirokoitia- Psematismenos- Maroni'}],
+    ['20280011', {shortName: '403', longName: 'Odou - Melini - Ora - Lagia - Choirokoitia - Kofinou Station'}],
+    ['20280012', {shortName: '403', longName: 'Kofinou Station - Choirokoitia - Lagia - Ora - Melini - Odou'}],
+    ['20290011', {
+        shortName: '404',
+        longName: 'Agioi Vavatsinias - Lagia - Vavla - Kato Drys - Skarinou - Kofinou Station'
+    }],
+    ['20290012', {
+        shortName: '404',
+        longName: 'Kofinou Station - Skarinou - Kato Drys - Vavla - Lagia - Agioi Vavatsinias'
+    }],
+    ['20300011', {shortName: '405', longName: 'Vavatsinia - Pano Lefkara - Kato Lefkara - Skarinou - Kofinou Station'}],
+    ['20300012', {shortName: '405', longName: 'Kofinou Station - Skarinou - Kato Lefkara - Pano Lefkara - Vavatsinia'}],
+    ['20300021', {
+        shortName: '405',
+        longName: 'Vavatsinia - Pano Lefkara - Kato Lefkara - Skarinou - Kofinou Station - Alampra Station'
+    }],
+    ['20300022', {shortName: '405', longName: 'Kofinou Station - Kato Lefkara - Pano Lefkara - Vavatsinia'}],
+    ['20310011', {shortName: '405A', longName: 'Pano Lefkara - Kato Lefkara - Skarinou - Kofinou Station'}],
+    ['20310012', {shortName: '405A', longName: 'Kofinou Station - Skarinou - Kato Lefkara - Pano Lefkara'}],
+    ['20320011', {shortName: '406', longName: 'Tourist Area Pentaschinos - Agios Theodoros - Kofinou St.'}],
+    ['20320012', {shortName: '406', longName: 'Kofinou St. - Agios Theodoros - Tourist Area Pentaschinos'}],
+    ['20330011', {
+        shortName: '407',
+        longName: 'Larnaca St. - Airport - Meneou - Kiti - Mazotos - Tourist Area Pentaschinos - Zygi - Vasiliko'
+    }],
+    ['20330012', {
+        shortName: '407',
+        longName: 'Zygi -Tourist Area Pentaschinos - Mazotos - Kiti - Meneou - Airport - Larnaca Station'
+    }],
+    ['20340011', {shortName: '408', longName: 'Larnaca Station - Alethriko - Anglisides - Kofinou Station'}],
+    ['20340012', {shortName: '408', longName: 'Kofinou Station - Anglisides - Alethriko - Larnaca Station'}],
+    ['20350011', {shortName: '408B', longName: 'Kofinou Station - Anglisides - Vergina- Rizoelia'}],
+    ['20350012', {shortName: '408B', longName: 'Rizoelia - Vergina- Anglisides -Menogeia-Kofinou Station'}],
+    ['20360011', {shortName: '409', longName: 'Larnaca St. - Lympia - Dali - Pera Chorio - Alampra St.'}],
+    ['20360012', {shortName: '409', longName: 'Alampra Station Pera Chorio - Dali - Lympia - Larnaca Station'}],
+    ['20360021', {
+        shortName: '409',
+        longName: 'Larnaca Station-Vergina School -Lympia-Dali-Pera Chorio-Alampra Station'
+    }],
+    ['20360022', {
+        shortName: '409',
+        longName: 'Alampra Station-Pera Chorio-Dali-Lympia-Kosi-Vergina School-Larnaca Station'
+    }],
+    ['20360031', {shortName: '409', longName: 'Larnaca Station - Kosi - Lympia - Dali - Pera Xorio - Alampra Station'}],
+    ['20360032', {shortName: '409', longName: 'Alampra Station - Pera Xorio - Dali - Lympia - Kosi - Larnaca Station'}],
+    ['20370011', {
+        shortName: '410',
+        longName: 'Larnaca Station - Kalo Chorio - Agia Anna - Psevdas - Pyrga - Kornos - Delikipos'
+    }],
+    ['20370012', {
+        shortName: '410',
+        longName: 'Delikipos - Kornos - Pyrga - Psevdas - Agia Anna - Kalo Chorio - Larnaca Station'
+    }],
+    ['20370021', {shortName: '410', longName: 'Larnaca Station - Vergina Lyceum- Kalo Chorio- Delikipos'}],
+    ['20370022', {shortName: '410', longName: 'Delikipos-Kornos-Kalo Chorio-Vergina Lyceum- Larnaca St'}],
+    ['20370031', {
+        shortName: '410',
+        longName: 'Larnaka  - Kalo Chorio - Agia anna - Psevdas- Pyrga - Kornos - Delikipos'
+    }],
+    ['20370032', {
+        shortName: '410',
+        longName: 'Delikipos - Kornos - Pyrga - Psvedas - Agia Anna - Kalo Chorio - Larnaca Station'
+    }],
+    ['20380011', {shortName: '412', longName: 'Larnaca Station - Alethriko - Anglisides - Anafotia - Alaminos'}],
+    ['20380012', {shortName: '412', longName: 'Alaminοs - Anafotia - Anglisides - Alethriko - Larnaca Station'}],
+    ['20380031', {shortName: '412', longName: 'Larnaca Station - Alethriko - Anglisides - Anafotia - Alaminos'}],
+    ['20380032', {shortName: '412', longName: 'Alaminos - Anafotia - Anglisides - Alethriko - Larnaca Station'}],
+    ['20380041', {shortName: '412', longName: 'Larnaca Station - Alethriko - Anglisidies - Anafotia - Alaminos'}],
+    ['20380042', {shortName: '412', longName: 'Alaminos - Anafotida - Anglisides - Alethriko - Larnaca Station'}],
+    ['20390011', {shortName: '413', longName: 'Kivisili - Alethriko - Klavdia - Larnaca Station'}],
+    ['20390012', {shortName: '413', longName: 'Larnaca Station - Klavdia - Alethriko - Kivisili'}],
+    ['20390021', {shortName: '413', longName: 'Kivisili - Alethriko - Klavdia - Vergina SC - Larnaca Station'}],
+    ['20390022', {shortName: '413', longName: 'Larnaca Station - Vergina SC  - Klavdia - Alethriko - Kivisili'}],
+    ['20390031', {shortName: '413', longName: 'Kivisili - Alethriko - Klavdia - Larnaca Station'}],
+    ['20390032', {shortName: '413', longName: 'Larnaca Station - Klavdia - Alethriko - Kivisili'}],
+    ['20400011', {
+        shortName: '414',
+        longName: 'Larnaca Station - Alethriko - Aplanta  - Anglisides - Menogeia - Kofinou Station'
+    }],
+    ['20400012', {
+        shortName: '414',
+        longName: 'Kofinou Station - Menogeia - Anglisides - Aplanta - Alethriko - Larnaca Station'
+    }],
+    ['20400021', {
+        shortName: '414',
+        longName: 'Larnaca Station - Alethriko-Aplanta-Anglisides-Menogeia-Politiko A- Kofinou Station'
+    }],
+    ['20400022', {
+        shortName: '414',
+        longName: 'Kofinou Station - Politiko A - Menogia - Anglisides- Aplanta-Alethriko- Larnaca Station'
+    }],
+    ['20410011', {shortName: '415', longName: 'Athienou - Avdellero - Aradippou - Larnaca Station'}],
+    ['20410012', {shortName: '415', longName: 'Larnaca Station - Aradippou - Avdellero - Athienou'}],
+    ['20410021', {shortName: '415', longName: 'Athienou-Avdellero-Aradippou-Vergina School-Larnaca Station'}],
+    ['20410022', {shortName: '415', longName: 'Larnaca Station-Vergina School-Aradippou-Avdellero-Athienou'}],
+    ['20410031', {shortName: '415', longName: 'Athienou - Aradippou - Lyceum Vergina - Larnaca Station'}],
+    ['20410032', {shortName: '415', longName: 'Larnaca - Vergina Lyceum - Aradippou - Athienou'}],
+    ['20420011', {
+        shortName: '448',
+        longName: 'Nightly Kofinou Station - Larnaca Station (Connection With Routes: 449 450 451)'
+    }],
+    ['20420012', {
+        shortName: '448',
+        longName: 'Nightly Larnaca Station - Kofinou Station (Connection With Routes: 449 450 451)'
+    }],
+    ['20430011', {
+        shortName: '449',
+        longName: 'Nightly Vavatsinia - Pano Lefkara - Kato Lefkara - Kato Drys - Skarinou - Kofinou Station'
+    }],
+    ['20430012', {
+        shortName: '449',
+        longName: 'Nightly Kofinou Station - Skarinou - Kato Drys - Kato Lefkara - Pano Lefkara - Vavatsinia'
+    }],
+    ['20440011', {
+        shortName: '450',
+        longName: 'Nightly Kalavasos - Tochni - Psematismenos - Maroni - Agios Theodoros - Kofinou - Kofinou Station'
+    }],
+    ['20440012', {
+        shortName: '450',
+        longName: 'Nightly Kofinou Station - Kofinou - Agios Theodoros - Maroni - Psematismenos - Tochni - Kalavasos'
+    }],
+    ['20450011', {
+        shortName: '451',
+        longName: 'Nightly Odou - Melini - Agioi Vavatsinias - Ora - Lagia - Vavla - Choirokoitia - Kofinou Station'
+    }],
+    ['20450012', {
+        shortName: '451',
+        longName: 'Nightly Kofinou Station - Choirokoitia - Vavla - Lagia - Ora - Agioi Vavatsinias - Melini - Odou'
+    }],
+    ['20460011', {
+        shortName: '452',
+        longName: 'Nightly Alaminos - Anafotia - Aplanta - Kivisili - Alethriko - Klavdia - Larnaca Station'
+    }],
+    ['20460012', {
+        shortName: '452',
+        longName: 'Nightly Larnaca Station - Klavdia - Alethriko - Kivisili - Aplanta - Anafotia - Alaminos'
+    }],
+    ['20470011', {shortName: '454', longName: 'Nightly Athienou - Avdellero - Aradippou - Larnaca Station'}],
+    ['20470012', {shortName: '454', longName: 'Nightly Larnaca Station - Aradippou - Avdellero -Athienou'}],
+    ['20480011', {
+        shortName: '455',
+        longName: 'Nightly Kornos - Pyrga - Mosfiloti - Psevdas - Agia Anna - Kalo Chorio - Larnaca Station'
+    }],
+    ['20480012', {
+        shortName: '455',
+        longName: 'Nightly Larnaca Station - Kalo Chorio - Agia Anna - Psevdas - Mosfiloti - Pyrga - Kornos'
+    }],
+    ['20490011', {
+        shortName: '456',
+        longName: 'Nightly Vasiliko - Mari - Zygi - Tourist Area Pentaschinos - Mazotos - Kiti - Meneou - Airport - Larnaka Station'
+    }],
+    ['20490012', {
+        shortName: '456',
+        longName: 'Nightly Larnaka Station - Airport - Meneou - Kiti - Mazotos - Tourist Area Pentaschinos - Zygi - Mari - Vasiliko'
+    }],
+    ['20500011', {shortName: '440', longName: 'Larnaca St. - Mackenzie - Mall - Larnaca St.'}],
+]);
+
+module.exports = {routes};
 
 },{}]},{},[2]);

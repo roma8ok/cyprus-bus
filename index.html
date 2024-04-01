@@ -26,6 +26,17 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
+        #location-button {
+            position: absolute;
+            bottom: 60px;
+            left: 10px;
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            font-size: 20px;
+            z-index: 1000;
+        }
         .roboto-regular {
             font-family: "Roboto", sans-serif;
             font-weight: 400;
@@ -36,7 +47,8 @@
 </head>
 <body>
 <div id="map"></div>
-<div id="bus-count" class="roboto-regular"></div>
+<button id="location-button" class="roboto-regular">📍</button>
+<div id="bus-count" class="roboto-regular">Buses transmit location:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 <script src="bundle.js"></script>
 </body>
 </html>

@@ -11144,6 +11144,14 @@ function createBusIcon(bearing) {
     });
 }
 
+document.getElementById('location-button').addEventListener('click', function() {
+    map.locate({setView: true, maxZoom: 15});
+
+    map.on('locationfound', function(e) {
+        L.circle(e.latlng, 50).addTo(map);
+    });
+});
+
 },{"./gtfs_realtime_pb.js":1,"leaflet":4}],3:[function(require,module,exports){
 (function (global){(function (){
 /*

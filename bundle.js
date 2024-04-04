@@ -11025,10 +11025,13 @@ const Proto = require('./gtfs_realtime_pb.js');
 const L = require('leaflet');
 const routes = require('./routes.js');
 
-if (window.location.protocol === 'https:') {
-    let httpsUrl = 'http://' + window.location.hostname + window.location.pathname;
-    alert('Warning: For up-to-date bus tracking, we\'re switching to HTTP due to open data source limitations. You\'ll be redirected shortly.\n\nClick OK to proceed to the HTTP version')
-    window.location.href = httpsUrl;
+window.onload = function() {
+    let warningElement = document.getElementById('warning');
+    if (window.location.protocol === 'https:') {
+        warningElement.style.display = 'flex';
+    } else {
+        warningElement.style.display = 'none';
+    }
 }
 
 let map = L.map('map').setView([35.1264, 33.4299], 8);

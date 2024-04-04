@@ -13,9 +13,11 @@
             margin: 0;
             padding: 0;
         }
+
         #map {
             min-height: 100%;
         }
+
         #bus-count {
             position: absolute;
             bottom: 10px;
@@ -26,17 +28,45 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
             z-index: 1000;
         }
+
         .roboto-regular {
             font-family: "Roboto", sans-serif;
             font-weight: 400;
             font-style: normal;
+        }
+
+        #warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 50px 30px;
+            background-color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+            z-index: 2000;
+            width: 70%;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
         }
     </style>
     <title>Cyprus bus</title>
 </head>
 <body>
 <div id="map"></div>
-<div id="bus-count" class="roboto-regular">Buses transmit location:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+<div id="bus-count" class="roboto-regular">Buses transmit location:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</div>
+<div id="warning" class="roboto-regular">
+    <div>
+        The data for this service is sourced from the <a href="https://www.data.gov.cy" target="_blank">National
+        Opendata Portal</a>.<br><br>
+        Since the data source uses HTTP, you need to access the Cyprus Bus website via an HTTP connection.<br><br>
+        To use this service, visit <a href="http://cyprusbus.info">http://cyprusbus.info</a>.
+    </div>
+</div>
 <script src="bundle.js"></script>
 </body>
 </html>

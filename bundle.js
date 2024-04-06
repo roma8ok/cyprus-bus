@@ -11036,7 +11036,7 @@ window.onload = function() {
 
 let map = L.map('map').setView([35.1264, 33.4299], 8);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
+    maxZoom: 19,
     attribution: '<a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 }).addTo(map);
 map.attributionControl.setPrefix('');
